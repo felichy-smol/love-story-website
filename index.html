@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Love Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --purple: #9b59b6;
+  --purple-light: #c39bd3;
+  --purple-dark: #7d3c98;
+  --blue: #5dade2;
+  --blue-light: #85c1e9;
+  --blue-dark: #2e86c1;
+  --pink: #f5b7d0;
+  --bg-start: #1a1035;
+  --bg-mid: #1c1044;
+  --bg-end: #0d1b3e;
+  --card-bg: rgba(255,255,255,0.07);
+  --card-border: rgba(255,255,255,0.12);
+  --text: #f0e6ff;
+  --text-muted: #b8a9d4;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, var(--bg-start), var(--bg-mid), var(--bg-end));
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+h1, h2, h3, .handwritten {
+  font-family: 'Caveat', cursive;
+}
+
+/* ── Floating Particles ── */
+.particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  animation: floatUp linear infinite;
+  opacity: 0;
+  font-size: 20px;
+}
+@keyframes floatUp {
+  0%   { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.7; }
+  100% { transform: translateY(-10vh) rotate(360deg) scale(1.2); opacity: 0; }
+}
+
+/* ── Container ── */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Header / Names ── */
+.header {
+  text-align: center;
+  padding: 40px 0 20px;
+}
+.header h1 {
+  font-size: 3.5rem;
+  background: linear-gradient(135deg, var(--pink), var(--purple-light), var(--blue-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  cursor: pointer;
+  transition: transform 0.3s;
+  display: inline-block;
+}
+.header h1:hover { transform: scale(1.03); }
+.header .subtitle {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ── Section Cards ── */
+.section {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 30px;
+  margin-bottom: 30px;
+  transition: transform 0.2s;
+}
+.section:hover { transform: translateY(-2px); }
+.section-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center;
+  color: var(--purple-light);
+}
+
+/* ── Counter ── */
+.counter-wrap {
+  text-align: center;
+}
+.counter {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.counter-unit {
+  background: linear-gradient(135deg, rgba(155,89,182,0.2), rgba(93,173,226,0.2));
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 18px 22px;
+  min-width: 100px;
+  text-align: center;
+}
+.counter-unit .number {
+  font-family: 'Caveat', cursive;
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--pink), var(--blue-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.counter-unit .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+.counter-sub {
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+
+/* ── Calendar ── */
+.cal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.cal-header h3 {
+  font-size: 1.8rem;
+  color: var(--purple-light);
+}
+.cal-nav {
+  background: none;
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  font-size: 1.2rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cal-nav:hover { background: rgba(155,89,182,0.3); }
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.cal-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+  position: relative;
+}
+.cal-day:hover { background: rgba(155,89,182,0.2); }
+.cal-day.empty { cursor: default; }
+.cal-day.empty:hover { background: none; }
+.cal-day.today {
+  background: linear-gradient(135deg, rgba(155,89,182,0.4), rgba(93,173,226,0.4));
+  font-weight: 700;
+}
+.cal-day.has-note::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: var(--pink);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 4px;
+}
+.cal-day.other-month { opacity: 0.3; }
+
+/* ── Calendar Modal ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: linear-gradient(135deg, #1e1145, #152252);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 30px;
+  width: 90%;
+  max-width: 420px;
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.modal h3 {
+  font-size: 1.6rem;
+  color: var(--purple-light);
+  margin-bottom: 12px;
+}
+.modal textarea {
+  width: 100%;
+  height: 100px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 12px;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.modal textarea:focus { border-color: var(--purple); }
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  justify-content: flex-end;
+}
+.btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+.btn:hover { transform: scale(1.05); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white;
+}
+.btn-danger {
+  background: rgba(231,76,60,0.3);
+  color: #e74c3c;
+  border: 1px solid rgba(231,76,60,0.3);
+}
+.btn-ghost {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-muted);
+}
+
+/* ── Memories ── */
+.memories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.memories-list::-webkit-scrollbar { width: 4px; }
+.memories-list::-webkit-scrollbar-track { background: transparent; }
+.memories-list::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 4px; }
+
+.memory-card {
+  background: linear-gradient(135deg, rgba(155,89,182,0.12), rgba(93,173,226,0.12));
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 16px 18px;
+  position: relative;
+}
+.memory-card .mem-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.memory-card .mem-title {
+  font-family: 'Caveat', cursive;
+  font-size: 1.4rem;
+  color: var(--pink);
+  margin-bottom: 4px;
+}
+.memory-card .mem-text {
+  font-size: 0.9rem;
+  color: var(--text);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.memory-card .mem-delete {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity 0.2s, color 0.2s;
+}
+.memory-card:hover .mem-delete { opacity: 1; }
+.memory-card .mem-delete:hover { color: #e74c3c; }
+
+.add-memory-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.add-memory-form input,
+.add-memory-form textarea {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.add-memory-form input:focus,
+.add-memory-form textarea:focus { border-color: var(--purple); }
+.add-memory-form textarea {
+  height: 80px;
+  resize: vertical;
+}
+.add-memory-form input::placeholder,
+.add-memory-form textarea::placeholder { color: var(--text-muted); opacity: 0.6; }
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-muted);
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+}
+
+/* ── Edit Names Modal ── */
+.names-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.names-form input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: 'Caveat', cursive;
+  font-size: 1.3rem;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.names-form input:focus { border-color: var(--purple); }
+.names-form input::placeholder { color: var(--text-muted); opacity: 0.6; }
+
+/* ── Nav tabs ── */
+.nav-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+.nav-tab {
+  padding: 8px 20px;
+  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-muted);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: 'Caveat', cursive;
+  font-size: 1.15rem;
+  transition: all 0.2s;
+}
+.nav-tab:hover { background: rgba(155,89,182,0.15); color: var(--text); }
+.nav-tab.active {
+  background: linear-gradient(135deg, rgba(155,89,182,0.3), rgba(93,173,226,0.3));
+  color: var(--text);
+  border-color: var(--purple);
+}
+
+/* ── Footer ── */
+.footer {
+  text-align: center;
+  padding: 30px 0 20px;
+  color: var(--text-muted);
+  font-family: 'Caveat', cursive;
+  font-size: 1.1rem;
+}
+.footer .heart { color: var(--pink); animation: heartbeat 1.2s infinite; display: inline-block; }
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  15% { transform: scale(1.25); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.15); }
+}
+
+/* ── Section visibility ── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .container { padding: 12px; }
+  .section { padding: 20px; }
+  .header h1 { font-size: 2.4rem; }
+  .counter-unit { min-width: 70px; padding: 12px 14px; }
+  .counter-unit .number { font-size: 2.2rem; }
+  .cal-day { font-size: 0.8rem; }
+}
+</style>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-database-compat.js"></script>
+<script>
+  firebase.initializeApp({
+    apiKey: "AIzaSyAaVrYJDMnO4-WKp58Ktxr9rcZzheSrdRU",
+    authDomain: "our-love-story-77ff9.firebaseapp.com",
+    projectId: "our-love-story-77ff9",
+    storageBucket: "our-love-story-77ff9.firebasestorage.app",
+    messagingSenderId: "1084409466348",
+    appId: "1:1084409466348:web:85c60955717ea95b7d84c9",
+    databaseURL: "https://our-love-story-77ff9-default-rtdb.firebaseio.com"
+  });
+</script>
+</head>
+<body>
+
+<!-- Floating Particles -->
+<div class="particles" id="particles"></div>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1 id="namesDisplay" onclick="openNamesModal()" title="Click to edit names">loading...</h1>
+    <div class="subtitle">since the best day of our lives</div>
+  </div>
+
+  <!-- Navigation -->
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showPanel('counter')">us</div>
+    <div class="nav-tab" onclick="showPanel('calendar')">calendar</div>
+    <div class="nav-tab" onclick="showPanel('memories')">memories</div>
+  </div>
+
+  <!-- Counter Panel -->
+  <div class="panel active" id="panel-counter">
+    <div class="section">
+      <div class="counter-wrap">
+        <div class="counter" id="counter">
+          <div class="counter-unit"><div class="number" id="c-days">0</div><div class="label">days</div></div>
+          <div class="counter-unit"><div class="number" id="c-hours">0</div><div class="label">hours</div></div>
+          <div class="counter-unit"><div class="number" id="c-mins">0</div><div class="label">minutes</div></div>
+          <div class="counter-unit"><div class="number" id="c-secs">0</div><div class="label">seconds</div></div>
+        </div>
+        <div class="counter-sub" id="counter-sub">together and counting</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar Panel -->
+  <div class="panel" id="panel-calendar">
+    <div class="section">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="calNav(-1)">&#8249;</button>
+        <h3 id="cal-title"></h3>
+        <button class="cal-nav" onclick="calNav(1)">&#8250;</button>
+      </div>
+      <div class="cal-weekdays">
+        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+      </div>
+      <div class="cal-days" id="cal-days"></div>
+    </div>
+  </div>
+
+  <!-- Memories Panel -->
+  <div class="panel" id="panel-memories">
+    <div class="section">
+      <div class="section-title">our memories</div>
+      <div class="add-memory-form">
+        <input type="text" id="mem-title" placeholder="title for this memory..." maxlength="80">
+        <textarea id="mem-text" placeholder="write something sweet..."></textarea>
+        <button class="btn btn-primary" onclick="addMemory()" style="align-self:flex-end">save memory</button>
+      </div>
+      <div class="memories-list" id="memories-list">
+        <div class="empty-state">no memories yet. start saving your favorite moments!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    made with <span class="heart">&hearts;</span> for us
+  </div>
+
+</div>
+
+<!-- Calendar Note Modal -->
+<div class="modal-overlay" id="noteModal">
+  <div class="modal">
+    <h3 id="noteModalTitle">note for this day</h3>
+    <textarea id="noteInput" placeholder="what happened today?"></textarea>
+    <div class="modal-actions">
+      <button class="btn btn-danger" id="noteDeleteBtn" onclick="deleteNote()" style="display:none">delete</button>
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost" onclick="closeNoteModal()">cancel</button>
+      <button class="btn btn-primary" onclick="saveNote()">save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Names Modal -->
+<div class="modal-overlay" id="namesModal">
+  <div class="modal">
+    <h3>our names</h3>
+    <div class="names-form">
+      <input type="text" id="name1Input" placeholder="name 1" maxlength="20">
+      <input type="text" id="name2Input" placeholder="name 2" maxlength="20">
+    </div>
+    <div class="modal-actions">
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost" onclick="closeNamesModal()">cancel</button>
+      <button class="btn btn-primary" onclick="saveNames()">save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  const db = firebase.database();
+  const ROOT = 'love-story';
+  const START_DATE = new Date('2026-08-14T06:10:00');
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function escHtml(s) {
+    const d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  /* ── Names ── */
+  let names = { name1: 'you', name2: 'your person' };
+  function updateNamesDisplay() {
+    document.getElementById('namesDisplay').textContent = names.name1 + ' & ' + names.name2;
+  }
+
+  db.ref(ROOT + '/names').on('value', function(snap) {
+    if (snap.val()) names = snap.val();
+    updateNamesDisplay();
+  });
+
+  window.openNamesModal = function() {
+    document.getElementById('name1Input').value = names.name1;
+    document.getElementById('name2Input').value = names.name2;
+    document.getElementById('namesModal').classList.add('active');
+  };
+  window.closeNamesModal = function() {
+    document.getElementById('namesModal').classList.remove('active');
+  };
+  window.saveNames = function() {
+    const n1 = document.getElementById('name1Input').value.trim() || 'you';
+    const n2 = document.getElementById('name2Input').value.trim() || 'your person';
+    names = { name1: n1, name2: n2 };
+    db.ref(ROOT + '/names').set(names);
+    closeNamesModal();
+  };
+
+  /* ── Counter ── */
+  function updateCounter() {
+    const now = new Date();
+    let diff = now - START_DATE;
+    if (diff < 0) diff = 0;
+    const totalSec = Math.floor(diff / 1000);
+    const days = Math.floor(totalSec / 86400);
+    const hours = Math.floor((totalSec % 86400) / 3600);
+    const mins = Math.floor((totalSec % 3600) / 60);
+    const secs = totalSec % 60;
+    document.getElementById('c-days').textContent = days;
+    document.getElementById('c-hours').textContent = pad(hours);
+    document.getElementById('c-mins').textContent = pad(mins);
+    document.getElementById('c-secs').textContent = pad(secs);
+  }
+  updateCounter();
+  setInterval(updateCounter, 1000);
+
+  /* ── Panels ── */
+  window.showPanel = function(id) {
+    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.getElementById('panel-' + id).classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(function(t) {
+      if (t.textContent.toLowerCase().includes(id.substring(0,3))) t.classList.add('active');
+    });
+  };
+
+  /* ── Calendar ── */
+  var calYear, calMonth;
+  var today = new Date();
+  calYear = today.getFullYear();
+  calMonth = today.getMonth();
+  var calSelectedDate = null;
+  var notesCache = {};
+
+  db.ref(ROOT + '/notes').on('value', function(snap) {
+    notesCache = snap.val() || {};
+    renderCalendar();
+  });
+
+  function renderCalendar() {
+    document.getElementById('cal-title').textContent = MONTHS[calMonth] + ' ' + calYear;
+    var container = document.getElementById('cal-days');
+    container.innerHTML = '';
+
+    var firstDay = new Date(calYear, calMonth, 1);
+    var startDay = firstDay.getDay() - 1;
+    if (startDay < 0) startDay = 6;
+
+    var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+    var daysInPrev = new Date(calYear, calMonth, 0).getDate();
+
+    for (var i = 0; i < startDay; i++) {
+      var d = daysInPrev - startDay + i + 1;
+      var el = document.createElement('div');
+      el.className = 'cal-day other-month';
+      el.textContent = d;
+      container.appendChild(el);
+    }
+
+    for (var dd = 1; dd <= daysInMonth; dd++) {
+      var el = document.createElement('div');
+      el.className = 'cal-day';
+      el.textContent = dd;
+      var dateKey = calYear + '-' + pad(calMonth + 1) + '-' + pad(dd);
+      if (dateKey === today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate())) {
+        el.classList.add('today');
+      }
+      if (notesCache[dateKey]) {
+        el.classList.add('has-note');
+      }
+      (function(key) {
+        el.addEventListener('click', function() { openNoteModal(key); });
+      })(dateKey);
+      container.appendChild(el);
+    }
+
+    var totalCells = startDay + daysInMonth;
+    var remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+    for (var i = 1; i <= remaining; i++) {
+      var el = document.createElement('div');
+      el.className = 'cal-day other-month';
+      el.textContent = i;
+      container.appendChild(el);
+    }
+  }
+
+  window.calNav = function(dir) {
+    calMonth += dir;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderCalendar();
+  };
+
+  function openNoteModal(dateKey) {
+    calSelectedDate = dateKey;
+    var d = new Date(dateKey + 'T12:00:00');
+    document.getElementById('noteModalTitle').textContent = MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+    document.getElementById('noteInput').value = notesCache[dateKey] || '';
+    document.getElementById('noteDeleteBtn').style.display = notesCache[dateKey] ? 'inline-block' : 'none';
+    document.getElementById('noteModal').classList.add('active');
+  }
+  window.closeNoteModal = function() {
+    document.getElementById('noteModal').classList.remove('active');
+    calSelectedDate = null;
+  };
+
+  window.saveNote = function() {
+    if (!calSelectedDate) return;
+    var val = document.getElementById('noteInput').value.trim();
+    if (val) {
+      db.ref(ROOT + '/notes/' + calSelectedDate).set(val);
+    } else {
+      db.ref(ROOT + '/notes/' + calSelectedDate).remove();
+    }
+    closeNoteModal();
+  };
+
+  window.deleteNote = function() {
+    if (!calSelectedDate) return;
+    db.ref(ROOT + '/notes/' + calSelectedDate).remove();
+    closeNoteModal();
+  };
+
+  /* ── Memories ── */
+  var memoriesCache = [];
+
+  db.ref(ROOT + '/memories').on('value', function(snap) {
+    var data = snap.val() || {};
+    memoriesCache = Object.keys(data).map(function(k) {
+      return Object.assign({ id: k }, data[k]);
+    });
+    renderMemories();
+  });
+
+  function renderMemories() {
+    var list = document.getElementById('memories-list');
+    if (memoriesCache.length === 0) {
+      list.innerHTML = '<div class="empty-state">no memories yet. start saving your favorite moments!</div>';
+      return;
+    }
+    list.innerHTML = '';
+    var sorted = memoriesCache.slice().sort(function(a, b) {
+      return new Date(b.date) - new Date(a.date);
+    });
+    sorted.forEach(function(m) {
+      var card = document.createElement('div');
+      card.className = 'memory-card';
+      var d = new Date(m.date);
+      var dateStr = MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+      card.innerHTML =
+        '<div class="mem-date">' + dateStr + '</div>' +
+        (m.title ? '<div class="mem-title">' + escHtml(m.title) + '</div>' : '') +
+        '<div class="mem-text">' + escHtml(m.message) + '</div>' +
+        '<button class="mem-delete" title="delete">&times;</button>';
+      (function(id) {
+        card.querySelector('.mem-delete').addEventListener('click', function() { deleteMemory(id); });
+      })(m.id);
+      list.appendChild(card);
+    });
+  }
+
+  window.addMemory = function() {
+    var title = document.getElementById('mem-title').value.trim();
+    var message = document.getElementById('mem-text').value.trim();
+    if (!message) return;
+    db.ref(ROOT + '/memories').push({
+      title: title,
+      message: message,
+      date: new Date().toISOString()
+    });
+    document.getElementById('mem-title').value = '';
+    document.getElementById('mem-text').value = '';
+  };
+
+  function deleteMemory(id) {
+    db.ref(ROOT + '/memories/' + id).remove();
+  }
+
+  /* ── Floating Particles ── */
+  var emojis = ['&#10084;','&#10084;','&#10084;','&#9734;','&#9733;','&#128150;','&#128151;','&#128156;','&#10024;','&#129412;'];
+  function spawnParticle() {
+    var el = document.createElement('span');
+    el.className = 'particle';
+    el.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + '%';
+    el.style.fontSize = (14 + Math.random() * 16) + 'px';
+    el.style.animationDuration = (6 + Math.random() * 8) + 's';
+    el.style.animationDelay = (Math.random() * 2) + 's';
+    document.getElementById('particles').appendChild(el);
+    setTimeout(function() { el.remove(); }, 16000);
+  }
+  setInterval(spawnParticle, 800);
+  for (var i = 0; i < 8; i++) setTimeout(spawnParticle, i * 300);
+
+  /* ── Close modals on overlay click ── */
+  document.querySelectorAll('.modal-overlay').forEach(function(ov) {
+    ov.addEventListener('click', function(e) {
+      if (e.target === ov) ov.classList.remove('active');
+    });
+  });
+
+  /* ── Keyboard ── */
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.modal-overlay.active').forEach(function(m) { m.classList.remove('active'); });
+    }
+  });
+
+  renderCalendar();
+
+})();
+</script>
+</body>
+</html>
