@@ -1168,7 +1168,8 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
     authReady = false;
     var hint = document.getElementById('authHint');
     hint.innerHTML = '<b>can&rsquo;t sign in to save photos yet &star;</b><br>In the Firebase console open <b>Build &rarr; Authentication &rarr; Sign-in method</b> and turn on <b>Anonymous</b>, then press the button below.' +
-      '<br><button onclick="firebase.auth().signInAnonymously()">I did it, try again</button>';
+      '<br><button onclick="firebase.auth().signInAnonymously()">I did it, try again</button>' +
+      '<br><span style="font-size:0.75rem;opacity:0.7">' + escHtml((err && (err.code + ' - ' + err.message)) || err || 'unknown error') + '</span>';
     hint.classList.add('show');
   });
 
@@ -1262,10 +1263,11 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
           var part = (snap.bytesTransferred / snap.totalBytes) / pendingFiles.length;
           fill.style.width = Math.round((base + part) * 100) + '%';
         },
-        function() {
+        function(err) {
           done++;
-          label.textContent = 'a photo slipped away (' + done + '/' + pendingFiles.length + ') \u2014 try it again?';
-          if (done === pendingFiles.length) setTimeout(function() { wrap.classList.remove('show'); }, 2500);
+          label.textContent = escHtml((err && err.code + ': ' + err.message) || 'upload failed') + ' (' + done + '/' + pendingFiles.length + ')';
+          label.style.color = '#e05262';
+          if (done === pendingFiles.length) setTimeout(function() { wrap.classList.remove('show'); }, 4000);
         },
         function() {
           task.snapshot.ref.getDownloadURL().then(function(url) {
