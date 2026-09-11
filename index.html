@@ -385,28 +385,6 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
   transition: width 0.2s;
 }
 .progress-label { font-size: 0.78rem; color: var(--muted); margin-top: 5px; text-align: center; }
-.auth-hint {
-  border: 1px solid #eed292;
-  background: rgba(255,246,224,0.8);
-  border-radius: 16px;
-  padding: 14px 18px;
-  margin-bottom: 16px;
-  font-size: 0.9rem;
-  color: #8a6a24;
-  line-height: 1.5;
-  display: none;
-}
-.auth-hint.show { display: block; }
-.auth-hint button {
-  border: none;
-  background: linear-gradient(135deg, var(--rose), var(--lav));
-  color: #fff;
-  border-radius: 20px;
-  padding: 6px 16px;
-  cursor: pointer;
-  font-weight: 700;
-  margin-top: 8px;
-}
 
 .gallery-grid {
   display: grid;
@@ -430,7 +408,8 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
   border-radius: 8px;
   cursor: pointer;
   display: block;
-  background: #f6eef7;
+  background: linear-gradient(135deg, #ffe9f2, #efe6ff);
+  color: #fff;
 }
 .polaroid .cap {
   font-family: 'Kalam', cursive;
@@ -600,9 +579,7 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
 }
 </style>
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-storage-compat.js"></script>
 <script>
   firebase.initializeApp({
     apiKey: "AIzaSyAaVrYJDMnO4-WKp58Ktxr9rcZzheSrdRU",
@@ -667,10 +644,9 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
   <div class="panel" id="panel-gallery">
     <div class="section">
       <div class="section-title">our gallery</div>
-      <div class="auth-hint" id="authHint"></div>
       <div class="upload-box" id="uploadBox">
         <div class="big">tap to pick some photos &hearts;</div>
-        <div class="tiny">jpegs, pngs, gifs anywhere on your phone</div>
+        <div class="tiny">photos get snugly tucked in and auto-sized to fit our free album</div>
         <input type="file" id="photoInput" accept="image/*" multiple>
       </div>
       <div class="upload-meta">
@@ -1156,29 +1132,9 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
   };
 
   /* ── Gallery ── */
-  var authReady = false;
   var photosCache = [];
   var pendingFiles = [];
-
-  firebase.auth().onAuthStateChanged(function(user) {
-    authReady = !!user;
-    updateUploadUI();
-  });
-  firebase.auth().signInAnonymously().catch(function(err) {
-    authReady = false;
-    var hint = document.getElementById('authHint');
-    hint.innerHTML = '<b>can&rsquo;t sign in to save photos yet &star;</b><br>In the Firebase console open <b>Build &rarr; Authentication &rarr; Sign-in method</b> and turn on <b>Anonymous</b>, then press the button below.' +
-      '<br><button onclick="firebase.auth().signInAnonymously()">I did it, try again</button>' +
-      '<br><span style="font-size:0.75rem;opacity:0.7">' + escHtml((err && (err.code + ' - ' + err.message)) || err || 'unknown error') + '</span>';
-    hint.classList.add('show');
-  });
-
-  function updateUploadUI() {
-    var box = document.getElementById('uploadBox');
-    var m = document.getElementById('uploadBtn');
-    box.style.opacity = authReady ? '1' : '0.5';
-    m.disabled = !authReady;
-  }
+  var photoDataCache = {};
 
   db.ref(ROOT + '/photos').on('value', function(snap) {
     var data = snap.val() || {};
@@ -1202,18 +1158,17 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
       var card = document.createElement('div');
       card.className = 'polaroid';
       card.style.setProperty('--r', rots[idx % rots.length] + 'deg');
+      card.setAttribute('data-photo', p.id);
       var img = document.createElement('img');
-      img.src = p.url;
-      img.loading = 'lazy';
       img.alt = p.caption || 'a photo of us';
-      img.addEventListener('click', function() { openLightbox(p.url, p.caption); });
+      img.addEventListener('click', function() { openLightbox(p.id); });
       var cap = document.createElement('div');
       cap.className = 'cap';
       cap.textContent = p.caption || '';
       var pdate = document.createElement('div');
       pdate.className = 'pdate';
       var d = new Date(p.date);
-      pdate.textContent = MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+      if (!isNaN(d.getTime())) pdate.textContent = MONTHS[d.getMonth()] + ' ' + d.getFullYear();
       var del = document.createElement('button');
       del.className = 'pdel';
       del.textContent = '\u00D7';
@@ -1223,113 +1178,163 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
       card.appendChild(pdate);
       card.appendChild(del);
       grid.appendChild(card);
+      observePhoto(card, img, p.id);
     });
   }
 
+  function observePhoto(card, img, id) {
+    var loaded = false;
+    function load() {
+      if (loaded) return;
+      loaded = true;
+      db.ref(ROOT + '/photo-data/' + id).once('value').then(function(snap) {
+        var v = snap.val();
+        if (v && typeof v === 'string') {
+          photoDataCache[id] = v;
+          img.src = v;
+        } else {
+          img.alt = 'photo missing';
+        }
+      }).catch(function() {
+        img.alt = 'photo missing';
+      });
+    }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function(entries) {
+        entries.forEach(function(e) {
+          if (e.isIntersecting) { io.unobserve(e.target); load(); }
+        });
+      }, { rootMargin: '300px' });
+      io.observe(card);
+    } else {
+      setTimeout(load, 300);
+    }
+  }
+
   document.getElementById('uploadBox').addEventListener('click', function() {
-    if (authReady) document.getElementById('photoInput').click();
+    document.getElementById('photoInput').click();
   });
   document.getElementById('photoInput').addEventListener('change', function() {
     pendingFiles = Array.prototype.slice.call(this.files).filter(function(f) {
       return f.type.indexOf('image/') === 0;
     });
-    var cap = document.getElementById('photoCaption');
-    cap.value = '';
+    document.getElementById('photoCaption').value = '';
     var label = document.querySelector('#uploadBox .big');
     label.innerHTML = pendingFiles.length ? pendingFiles.length + ' photo' + (pendingFiles.length > 1 ? 's' : '') + ' picked &hearts;' : 'tap to pick some photos &hearts;';
   });
 
-  function cleanName(name) {
-    return name.replace(/[^a-zA-Z0-9._-]/g, '').replace(/\.+/g, '.').slice(0, 60) || 'photo.jpg';
+  function fileToImage(file) {
+    return new Promise(function(resolve) {
+      var reader = new FileReader();
+      reader.onload = function() {
+        var img = new Image();
+        img.onload = function() { resolve({ img: img, raw: reader.result }); };
+        img.onerror = function() { resolve({ img: null, raw: reader.result }); };
+        img.src = reader.result;
+      };
+      reader.onerror = function() { resolve({ img: null, raw: null }); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function resizeImage(img, maxDim, quality) {
+    var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+    var w = Math.max(1, Math.round(img.width * scale));
+    var h = Math.max(1, Math.round(img.height * scale));
+    var c = document.createElement('canvas');
+    c.width = w;
+    c.height = h;
+    var ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(img, 0, 0, w, h);
+    return c.toDataURL('image/jpeg', quality);
   }
 
   window.startUpload = function() {
-    if (!authReady || !pendingFiles.length) return;
+    if (!pendingFiles.length) return;
     var caption = document.getElementById('photoCaption').value.trim();
     var wrap = document.getElementById('progressWrap');
     var fill = document.getElementById('progressFill');
     var label = document.getElementById('progressLabel');
+    var btn = document.getElementById('uploadBtn');
     wrap.classList.add('show');
     fill.style.width = '0%';
     label.style.color = '';
-    label.textContent = 'uploading 0 of ' + pendingFiles.length + '...';
+    label.textContent = 'getting our photos ready...';
+    btn.disabled = true;
 
+    var total = pendingFiles.length;
     var done = 0;
-    var stalled = false;
-    var stallTimer = null;
+    var failed = 0;
 
-    function checkStall() {
-      if (stalled || done >= pendingFiles.length) return;
-      stalled = true;
-      label.style.color = '#e05262';
-      label.textContent = 'the upload seems stuck. ' +
-        'Press F12 and watch the Console + Network tab while retrying, then tell me what appears. ' +
-        'Also try a small photo (under 2MB) to rule out size/connection limits.';
-      console.error('[gallery] upload stalled. bucket:', firebase.storage().ref().bucket);
-      console.error('[gallery] signed in:', !!firebase.auth().currentUser);
-      console.error('[gallery] pending:', pendingFiles.length, 'done:', done);
+    function finishOne() {
+      done++;
+      if (failed && done - failed === 0 && failed === total) {
+        btn.disabled = false;
+        return;
+      }
+      fill.style.width = Math.round(done / total * 100) + '%';
+      label.textContent = done >= total
+        ? (failed ? (done - failed) + ' photo' + ((done - failed) === 1 ? '' : 's') + ' saved, ' + failed + ' didn\u2019t make it &star;' : 'all tucked into the album &hearts;')
+        : 'saving ' + done + ' of ' + total + '...';
+      if (done >= total) {
+        btn.disabled = false;
+        pendingFiles = [];
+        document.getElementById('photoInput').value = '';
+        document.querySelector('#uploadBox .big').innerHTML = 'tap to pick some photos &hearts;';
+        setTimeout(function() { wrap.classList.remove('show'); }, 3200);
+      }
     }
 
-    pendingFiles.forEach(function(file, i) {
-      var path = 'photos/' + Date.now() + '_' + i + '_' + cleanName(file.name);
-      console.info('[gallery] starting upload', i, file.name, file.size + ' bytes');
-      var task = firebase.storage().ref(path).put(file);
-      stallTimer = setTimeout(checkStall, 45000);
-      task.on('state_changed',
-        function(snap) {
-          clearTimeout(stallTimer);
-          stalled = false;
-          var base = done / pendingFiles.length;
-          var part = (snap.bytesTransferred / snap.totalBytes) / pendingFiles.length;
-          fill.style.width = Math.round((base + part) * 100) + '%';
-          label.style.color = '';
-          label.textContent = 'uploading ' + Math.round(snap.bytesTransferred / 1048576 * 10) / 10 + ' MB of ' + Math.round(snap.totalBytes / 1048576 * 10) / 10 + ' MB...';
-          stallTimer = setTimeout(checkStall, 45000);
-          if (i === 0) console.info('[gallery] transferred', snap.bytesTransferred, 'of', snap.totalBytes);
-        },
-        function(err) {
-          clearTimeout(stallTimer);
-          done++;
-          console.error('[gallery] upload error', err && err.code, err && err.message);
-          label.textContent = escHtml((err && err.code + ': ' + err.message) || 'upload failed') + ' (' + done + '/' + pendingFiles.length + ')';
-          label.style.color = '#e05262';
-          if (done === pendingFiles.length) setTimeout(function() { wrap.classList.remove('show'); }, 6000);
-        },
-        function() {
-          task.snapshot.ref.getDownloadURL().then(function(url) {
-            db.ref(ROOT + '/photos').push({
-              url: url,
-              caption: caption,
-              date: new Date().toISOString(),
-              path: path
-            });
-            done++;
-            label.textContent = 'saving ' + done + ' of ' + pendingFiles.length + '...';
-            if (done === pendingFiles.length) {
-              fill.style.width = '100%';
-              label.textContent = 'all tucked into the album &hearts;';
-              pendingFiles = [];
-              document.getElementById('photoInput').value = '';
-              document.querySelector('#uploadBox .big').innerHTML = 'tap to pick some photos &hearts;';
-              setTimeout(function() { wrap.classList.remove('show'); }, 2200);
-            }
-          });
+    pendingFiles.forEach(function(file) {
+      fileToImage(file).then(function(r) {
+        var dataUrl;
+        if (r.img) {
+          dataUrl = resizeImage(r.img, 1200, 0.72);
+          if (dataUrl.length > 1500000) dataUrl = resizeImage(r.img, 900, 0.55);
+        } else if (r.raw) {
+          dataUrl = r.raw;
+        } else {
+          failed++;
+          finishOne();
+          return;
         }
-      );
+        var newRef = db.ref(ROOT + '/photos').push();
+        db.ref(ROOT + '/photo-data/' + newRef.key).set(dataUrl).then(function() {
+          return newRef.set({ caption: caption, date: new Date().toISOString() });
+        }).then(function() {
+          finishOne();
+        }).catch(function(err) {
+          failed++;
+          console.error('[gallery] save error', err && err.message);
+          finishOne();
+        });
+      });
     });
   };
 
   function deletePhoto(p) {
     if (!confirm('delete this photo?')) return;
-    if (p.path) {
-      firebase.storage().ref(p.path).delete().catch(function() {});
-    }
+    db.ref(ROOT + '/photo-data/' + p.id).remove();
     db.ref(ROOT + '/photos/' + p.id).remove();
   }
 
-  function openLightbox(url, caption) {
-    document.getElementById('lightboxImg').src = url;
-    document.getElementById('lightboxCap').textContent = caption || '';
+  function openLightbox(id) {
+    var cap = document.getElementById('lightboxCap');
+    var p = photosCache.filter(function(x) { return x.id === id; })[0];
+    cap.textContent = p && p.caption ? p.caption : '';
+    var img = document.getElementById('lightboxImg');
+    img.src = photoDataCache[id] || '';
+    if (!photoDataCache[id]) {
+      db.ref(ROOT + '/photo-data/' + id).once('value').then(function(snap) {
+        var v = snap.val();
+        if (v && typeof v === 'string') {
+          photoDataCache[id] = v;
+          img.src = v;
+        }
+      });
+    }
     document.getElementById('lightboxModal').classList.add('active');
   }
 
