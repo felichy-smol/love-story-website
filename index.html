@@ -6,50 +6,40 @@
 <title>Our Love Story</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Nunito:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Nunito:wght@300;400;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --purple: #9b59b6;
-  --purple-light: #c39bd3;
-  --purple-dark: #7d3c98;
-  --blue: #5dade2;
-  --blue-light: #85c1e9;
-  --blue-dark: #2e86c1;
-  --pink: #f5b7d0;
-  --bg-start: #1a1035;
-  --bg-mid: #1c1044;
-  --bg-end: #0d1b3e;
-  --card-bg: rgba(255,255,255,0.07);
-  --card-border: rgba(255,255,255,0.12);
-  --text: #f0e6ff;
-  --text-muted: #b8a9d4;
+  --rose: #f2699d;
+  --rose-deep: #e2558a;
+  --rose-soft: #ffd6e5;
+  --lav: #a98cf5;
+  --lav-soft: #e2daee;
+  --sky: #6ea8f8;
+  --peach: #ffb27a;
+  --ink: #5c3f63;
+  --muted: #a48bb0;
+  --card: rgba(255,255,255,0.78);
+  --card-border: #f3dbe9;
+  --shadow: 0 10px 34px rgba(178,127,190,0.16);
 }
 
 html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Nunito', sans-serif;
-  background: linear-gradient(135deg, var(--bg-start), var(--bg-mid), var(--bg-end));
-  color: var(--text);
+  background: linear-gradient(160deg, #fff1f6 0%, #f6ecff 45%, #e9f2ff 100%);
+  background-attachment: fixed;
+  color: var(--ink);
   min-height: 100vh;
   overflow-x: hidden;
-  position: relative;
 }
 
-h1, h2, h3, .handwritten {
-  font-family: 'Caveat', cursive;
-}
+h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
 
-/* ── Floating Particles ── */
-.particles {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
+/* ── Floating cute sparkles ── */
+.particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
 .particle {
   position: absolute;
   animation: floatUp linear infinite;
@@ -58,14 +48,14 @@ h1, h2, h3, .handwritten {
 }
 @keyframes floatUp {
   0%   { transform: translateY(100vh) rotate(0deg) scale(0.5); opacity: 0; }
-  10%  { opacity: 0.7; }
-  90%  { opacity: 0.7; }
+  10%  { opacity: 0.8; }
+  90%  { opacity: 0.8; }
   100% { transform: translateY(-10vh) rotate(360deg) scale(1.2); opacity: 0; }
 }
 
 /* ── Container ── */
 .container {
-  max-width: 800px;
+  max-width: 780px;
   margin: 0 auto;
   padding: 20px;
   position: relative;
@@ -73,13 +63,11 @@ h1, h2, h3, .handwritten {
 }
 
 /* ── Header / Names ── */
-.header {
-  text-align: center;
-  padding: 40px 0 20px;
-}
+.header { text-align: center; padding: 34px 0 18px; }
 .header h1 {
-  font-size: 3.5rem;
-  background: linear-gradient(135deg, var(--pink), var(--purple-light), var(--blue-light));
+  font-size: 3.4rem;
+  line-height: 1.15;
+  background: linear-gradient(135deg, var(--rose), var(--lav), var(--sky));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -89,368 +77,509 @@ h1, h2, h3, .handwritten {
 }
 .header h1:hover { transform: scale(1.03); }
 .header .subtitle {
-  font-family: 'Caveat', cursive;
-  font-size: 1.4rem;
-  color: var(--text-muted);
-  margin-top: 4px;
+  font-family: 'Kalam', cursive;
+  font-size: 1.35rem;
+  color: var(--muted);
+  margin-top: 6px;
 }
-
-/* ── Section Cards ── */
-.section {
-  background: var(--card-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--card-border);
-  border-radius: 24px;
-  padding: 30px;
-  margin-bottom: 30px;
-  transition: transform 0.2s;
-}
-.section:hover { transform: translateY(-2px); }
-.section-title {
-  font-size: 2rem;
-  margin-bottom: 20px;
-  text-align: center;
-  color: var(--purple-light);
-}
-
-/* ── Counter ── */
-.counter-wrap {
-  text-align: center;
-}
-.counter {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-.counter-unit {
-  background: linear-gradient(135deg, rgba(155,89,182,0.2), rgba(93,173,226,0.2));
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 18px 22px;
-  min-width: 100px;
-  text-align: center;
-}
-.counter-unit .number {
-  font-family: 'Caveat', cursive;
-  font-size: 3rem;
-  font-weight: 700;
-  line-height: 1;
-  background: linear-gradient(135deg, var(--pink), var(--blue-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.counter-unit .label {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  margin-top: 4px;
-}
-.counter-sub {
-  font-family: 'Caveat', cursive;
-  font-size: 1.3rem;
-  color: var(--text-muted);
-  margin-top: 16px;
-}
-
-/* ── Calendar ── */
-.cal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-}
-.cal-header h3 {
-  font-size: 1.8rem;
-  color: var(--purple-light);
-}
-.cal-nav {
-  background: none;
-  border: 1px solid var(--card-border);
-  color: var(--text);
-  font-size: 1.2rem;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.cal-nav:hover { background: rgba(155,89,182,0.3); }
-
-.cal-weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-}
-.cal-days {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-}
-.cal-day {
-  aspect-ratio: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: background 0.2s;
-  position: relative;
-}
-.cal-day:hover { background: rgba(155,89,182,0.2); }
-.cal-day.empty { cursor: default; }
-.cal-day.empty:hover { background: none; }
-.cal-day.today {
-  background: linear-gradient(135deg, rgba(155,89,182,0.4), rgba(93,173,226,0.4));
-  font-weight: 700;
-}
-.cal-day.has-note::after {
-  content: '';
-  width: 6px;
-  height: 6px;
-  background: var(--pink);
-  border-radius: 50%;
-  position: absolute;
-  bottom: 4px;
-}
-.cal-day.other-month { opacity: 0.3; }
-
-/* ── Calendar Modal ── */
-.modal-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(4px);
-  z-index: 100;
-  align-items: center;
-  justify-content: center;
-}
-.modal-overlay.active { display: flex; }
-.modal {
-  background: linear-gradient(135deg, #1e1145, #152252);
-  border: 1px solid var(--card-border);
-  border-radius: 20px;
-  padding: 30px;
-  width: 90%;
-  max-width: 420px;
-  position: relative;
-  animation: modalIn 0.3s ease;
-}
-@keyframes modalIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-.modal h3 {
-  font-size: 1.6rem;
-  color: var(--purple-light);
-  margin-bottom: 12px;
-}
-.modal textarea {
-  width: 100%;
-  height: 100px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 12px;
-  color: var(--text);
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.95rem;
-  resize: vertical;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.modal textarea:focus { border-color: var(--purple); }
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-  justify-content: flex-end;
-}
-.btn {
-  padding: 8px 20px;
-  border: none;
-  border-radius: 12px;
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s, background 0.2s;
-}
-.btn:hover { transform: scale(1.05); }
-.btn-primary {
-  background: linear-gradient(135deg, var(--purple), var(--blue));
-  color: white;
-}
-.btn-danger {
-  background: rgba(231,76,60,0.3);
-  color: #e74c3c;
-  border: 1px solid rgba(231,76,60,0.3);
-}
-.btn-ghost {
-  background: rgba(255,255,255,0.08);
-  color: var(--text-muted);
-}
-
-/* ── Memories ── */
-.memories-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 4px;
-}
-.memories-list::-webkit-scrollbar { width: 4px; }
-.memories-list::-webkit-scrollbar-track { background: transparent; }
-.memories-list::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 4px; }
-
-.memory-card {
-  background: linear-gradient(135deg, rgba(155,89,182,0.12), rgba(93,173,226,0.12));
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 16px;
-  padding: 16px 18px;
-  position: relative;
-}
-.memory-card .mem-date {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-bottom: 4px;
-}
-.memory-card .mem-title {
-  font-family: 'Caveat', cursive;
-  font-size: 1.4rem;
-  color: var(--pink);
-  margin-bottom: 4px;
-}
-.memory-card .mem-text {
-  font-size: 0.9rem;
-  color: var(--text);
-  line-height: 1.5;
-  white-space: pre-wrap;
-}
-.memory-card .mem-delete {
-  position: absolute;
-  top: 12px;
-  right: 14px;
-  background: none;
-  border: none;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 1rem;
-  opacity: 0;
-  transition: opacity 0.2s, color 0.2s;
-}
-.memory-card:hover .mem-delete { opacity: 1; }
-.memory-card .mem-delete:hover { color: #e74c3c; }
-
-.add-memory-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-.add-memory-form input,
-.add-memory-form textarea {
-  width: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 10px 14px;
-  color: var(--text);
-  font-family: 'Nunito', sans-serif;
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.add-memory-form input:focus,
-.add-memory-form textarea:focus { border-color: var(--purple); }
-.add-memory-form textarea {
-  height: 80px;
-  resize: vertical;
-}
-.add-memory-form input::placeholder,
-.add-memory-form textarea::placeholder { color: var(--text-muted); opacity: 0.6; }
-
-.empty-state {
-  text-align: center;
-  padding: 30px;
-  color: var(--text-muted);
-  font-family: 'Caveat', cursive;
-  font-size: 1.3rem;
-}
-
-/* ── Edit Names Modal ── */
-.names-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-.names-form input {
-  width: 100%;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 10px 14px;
-  color: var(--text);
-  font-family: 'Caveat', cursive;
-  font-size: 1.3rem;
-  text-align: center;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.names-form input:focus { border-color: var(--purple); }
-.names-form input::placeholder { color: var(--text-muted); opacity: 0.6; }
 
 /* ── Nav tabs ── */
 .nav-tabs {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-bottom: 30px;
+  margin-bottom: 26px;
   flex-wrap: wrap;
 }
 .nav-tab {
-  padding: 8px 20px;
+  padding: 9px 22px;
   border: 1px solid var(--card-border);
-  background: rgba(255,255,255,0.04);
-  color: var(--text-muted);
-  border-radius: 20px;
+  background: rgba(255,255,255,0.6);
+  color: var(--muted);
+  border-radius: 30px;
   cursor: pointer;
-  font-family: 'Caveat', cursive;
+  font-family: 'Kalam', cursive;
   font-size: 1.15rem;
+  transition: all 0.25s;
+}
+.nav-tab:hover { background: rgba(255,255,255,0.95); color: var(--rose-deep); transform: translateY(-1px); }
+.nav-tab.active {
+  background: linear-gradient(135deg, #ff9cbf, #c9adf7);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 18px rgba(230,120,170,0.35);
+}
+
+/* ── Cards ── */
+.section {
+  background: var(--card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 28px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s;
+}
+.section:hover { transform: translateY(-2px); }
+.section-title {
+  font-size: 1.9rem;
+  margin-bottom: 18px;
+  text-align: center;
+  color: var(--rose-deep);
+}
+
+/* ── Counter / us ── */
+.counter-wrap { text-align: center; }
+.counter-heading {
+  font-size: 1.6rem;
+  color: var(--lav);
+  margin-bottom: 6px;
+}
+.counter {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.counter-unit {
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 18px;
+  padding: 16px 20px;
+  min-width: 92px;
+  text-align: center;
+  box-shadow: 0 6px 16px rgba(178,127,190,0.12);
+}
+.counter-unit .number {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 2.7rem;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--rose), var(--peach), var(--lav));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.counter-unit .label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+.counter-sub {
+  font-family: 'Kalam', cursive;
+  font-size: 1.25rem;
+  color: var(--muted);
+  margin-top: 16px;
+}
+.counter-sub b { color: var(--rose-deep); font-weight: 700; }
+
+.milestone {
+  margin: 16px auto 0;
+  display: inline-block;
+  padding: 9px 22px;
+  border-radius: 30px;
+  border: 2px dashed var(--rose-soft);
+  background: rgba(255,224,238,0.6);
+  font-family: 'Kalam', cursive;
+  font-size: 1.1rem;
+  color: var(--rose-deep);
+}
+
+/* ── Story toolbar ── */
+.toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
+.toolbar .search {
+  flex: 1;
+  min-width: 150px;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 30px;
+  padding: 9px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.toolbar .search:focus { border-color: var(--rose); }
+.chips { display: flex; gap: 6px; }
+.chip {
+  padding: 8px 16px;
+  border: 1px solid var(--card-border);
+  background: #fff;
+  color: var(--muted);
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
   transition: all 0.2s;
 }
-.nav-tab:hover { background: rgba(155,89,182,0.15); color: var(--text); }
-.nav-tab.active {
-  background: linear-gradient(135deg, rgba(155,89,182,0.3), rgba(93,173,226,0.3));
-  color: var(--text);
-  border-color: var(--purple);
+.chip.active {
+  background: linear-gradient(135deg, #ffd3e3, #e2d9f8);
+  color: var(--rose-deep);
+  border-color: transparent;
 }
+
+/* ── Timeline ── */
+.tl-group { margin-bottom: 18px; }
+.tl-month {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px 8px;
+  font-family: 'Kalam', cursive;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--rose-deep);
+}
+.tl-month .chev { transition: transform 0.25s; color: var(--lav); font-size: 1rem; }
+.tl-group.collapsed .chev { transform: rotate(-90deg); }
+.tl-month .count { font-size: 0.9rem; color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 600; margin-left: auto; }
+.tl-group.collapsed .tl-items { display: none; }
+
+.tl-items { display: flex; flex-direction: column; gap: 10px; }
+.tl-item {
+  background: linear-gradient(90deg, #fff0f6, #faf2ff);
+  border: 1px solid #f6dce9;
+  border-left: 4px solid var(--rose-soft);
+  border-radius: 18px;
+  padding: 13px 18px 13px 12px;
+  display: flex;
+  gap: 12px;
+  position: relative;
+}
+.tl-item.note-item {
+  background: linear-gradient(90deg, #f3efff, #f2f5ff);
+  border-color: #e3dcf3;
+  border-left-color: var(--lav-soft);
+}
+.tl-date {
+  width: 52px;
+  flex-shrink: 0;
+  text-align: center;
+  padding-top: 2px;
+}
+.tl-date .day { font-family: 'Patrick Hand', cursive; font-size: 1.7rem; line-height: 1; color: var(--ink); }
+.tl-date .mth {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+}
+.tl-body { flex: 1; min-width: 0; }
+.tl-tag {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--lav);
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.tl-title {
+  font-family: 'Kalam', cursive;
+  font-size: 1.35rem;
+  color: var(--rose-deep);
+  margin-bottom: 2px;
+}
+.tl-text {
+  font-size: 0.92rem;
+  color: var(--ink);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.tl-actions {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  display: flex;
+  gap: 6px;
+  opacity: 0.45;
+  transition: opacity 0.2s;
+}
+.tl-item:hover .tl-actions { opacity: 1; }
+.tl-act {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  box-shadow: 0 3px 10px rgba(178,127,190,0.2);
+  transition: transform 0.15s;
+}
+.tl-act:hover { transform: scale(1.12); }
+.tl-act.del { color: #e05262; }
+
+.empty-state {
+  text-align: center;
+  padding: 34px 10px;
+  color: var(--muted);
+  font-family: 'Kalam', cursive;
+  font-size: 1.3rem;
+}
+
+/* ── Gallery ── */
+.upload-box {
+  border: 2px dashed #f0b8d4;
+  background: rgba(255,247,251,0.7);
+  border-radius: 20px;
+  padding: 22px 20px;
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 18px;
+  transition: background 0.25s, transform 0.2s;
+}
+.upload-box:hover { background: rgba(255,231,242,0.9); transform: translateY(-1px); }
+.upload-box .big { font-family: 'Kalam', cursive; font-size: 1.25rem; color: var(--rose-deep); }
+.upload-box .tiny { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+.upload-box input[type=file] { display: none; }
+.upload-meta { display: flex; gap: 10px; margin-bottom: 12px; }
+.upload-meta input {
+  flex: 1;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 30px;
+  padding: 9px 16px;
+  font-family: 'Kalam', cursive;
+  font-size: 1rem;
+  color: var(--ink);
+  outline: none;
+}
+.upload-meta input:focus { border-color: var(--rose); }
+.upload-meta button {
+  border: none;
+  border-radius: 30px;
+  padding: 9px 24px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--rose), var(--lav));
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.upload-meta button:hover { transform: scale(1.04); }
+.upload-meta button:disabled { opacity: 0.5; cursor: default; transform: none; }
+.progress-wrap { display: none; margin-bottom: 16px; }
+.progress-wrap.show { display: block; }
+.progress-bar {
+  height: 10px;
+  border-radius: 10px;
+  background: #f2e2ef;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--rose), var(--lav), var(--sky));
+  transition: width 0.2s;
+}
+.progress-label { font-size: 0.78rem; color: var(--muted); margin-top: 5px; text-align: center; }
+.auth-hint {
+  border: 1px solid #eed292;
+  background: rgba(255,246,224,0.8);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  color: #8a6a24;
+  line-height: 1.5;
+  display: none;
+}
+.auth-hint.show { display: block; }
+.auth-hint button {
+  border: none;
+  background: linear-gradient(135deg, var(--rose), var(--lav));
+  color: #fff;
+  border-radius: 20px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+.polaroid {
+  background: #fff;
+  padding: 9px 9px 12px;
+  border-radius: 14px;
+  box-shadow: 0 8px 22px rgba(178,127,190,0.2);
+  transform: rotate(var(--r, 0deg));
+  transition: transform 0.25s, box-shadow 0.25s;
+  position: relative;
+}
+.polaroid:hover { transform: rotate(0deg) scale(1.04); box-shadow: 0 12px 28px rgba(178,127,190,0.3); }
+.polaroid img {
+  width: 100%;
+  height: 130px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  background: #f6eef7;
+}
+.polaroid .cap {
+  font-family: 'Kalam', cursive;
+  font-size: 1.05rem;
+  color: var(--rose-deep);
+  text-align: center;
+  margin-top: 8px;
+  line-height: 1.2;
+  word-break: break-word;
+}
+.polaroid .pdate { font-size: 0.62rem; color: var(--muted); text-align: center; text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+.polaroid .pdel {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.92);
+  color: #e05262;
+  cursor: pointer;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.polaroid:hover .pdel { opacity: 1; }
+
+/* ── Modals ── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(80,40,90,0.4);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px;
+  width: 100%;
+  max-width: 460px;
+  position: relative;
+  animation: modalIn 0.25s ease;
+  box-shadow: 0 24px 60px rgba(120,60,130,0.35);
+}
+@keyframes modalIn {
+  from { transform: scale(0.92) translateY(10px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+.modal h3 {
+  font-size: 1.6rem;
+  color: var(--rose-deep);
+  margin-bottom: 14px;
+  text-align: center;
+}
+.modal textarea,
+.modal input[type=text],
+.modal input[type=date],
+.names-form input {
+  width: 100%;
+  background: #fdf6fa;
+  border: 1px solid #f1d6e6;
+  border-radius: 14px;
+  padding: 11px 14px;
+  color: var(--ink);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.modal textarea { height: 90px; resize: vertical; }
+.modal textarea:focus, .modal input:focus, .names-form input:focus { border-color: var(--rose); }
+.names-form { display: flex; flex-direction: column; gap: 10px; }
+.names-form input { font-family: 'Kalam', cursive; font-size: 1.25rem; text-align: center; }
+.names-form input::placeholder, .modal input::placeholder, .modal textarea::placeholder { color: var(--muted); opacity: 0.6; }
+
+.seg {
+  display: flex;
+  background: #f7e8f2;
+  border-radius: 30px;
+  padding: 4px;
+  margin-bottom: 12px;
+  gap: 4px;
+}
+.seg button {
+  flex: 1;
+  border: none;
+  background: transparent;
+  border-radius: 26px;
+  padding: 8px 10px;
+  font-family: 'Kalam', cursive;
+  font-size: 1rem;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.seg button.active {
+  background: #fff;
+  color: var(--rose-deep);
+  font-weight: 700;
+  box-shadow: 0 3px 10px rgba(178,127,190,0.18);
+}
+.form-field { margin-bottom: 12px; }
+.form-field label {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.modal-actions { display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end; }
+.btn {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 30px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s, background 0.2s;
+}
+.btn:hover { transform: scale(1.05); }
+.btn-primary { background: linear-gradient(135deg, var(--rose), var(--lav)); color: #fff; box-shadow: 0 6px 16px rgba(230,120,170,0.35); }
+.btn-danger { background: #fde7ea; color: #e05262; border: 1px solid #f6c7cf; }
+.btn-ghost { background: #f5e9f3; color: var(--muted); }
+
+/* ── Lightbox ── */
+.lightbox-img { max-width: 92vw; max-height: 78vh; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
+.lightbox-cap { font-family: 'Kalam', cursive; font-size: 1.3rem; color: #fff; text-align: center; margin-top: 12px; text-shadow: 0 2px 8px rgba(0,0,0,0.4); }
 
 /* ── Footer ── */
 .footer {
   text-align: center;
-  padding: 30px 0 20px;
-  color: var(--text-muted);
-  font-family: 'Caveat', cursive;
+  padding: 26px 0 20px;
+  color: var(--muted);
+  font-family: 'Kalam', cursive;
   font-size: 1.1rem;
 }
-.footer .heart { color: var(--pink); animation: heartbeat 1.2s infinite; display: inline-block; }
+.footer .heart { color: var(--rose); animation: heartbeat 1.2s infinite; display: inline-block; }
 @keyframes heartbeat {
   0%, 100% { transform: scale(1); }
   15% { transform: scale(1.25); }
@@ -458,22 +587,22 @@ h1, h2, h3, .handwritten {
   45% { transform: scale(1.15); }
 }
 
-/* ── Section visibility ── */
 .panel { display: none; }
 .panel.active { display: block; }
 
-/* ── Responsive ── */
 @media (max-width: 600px) {
   .container { padding: 12px; }
   .section { padding: 20px; }
   .header h1 { font-size: 2.4rem; }
-  .counter-unit { min-width: 70px; padding: 12px 14px; }
-  .counter-unit .number { font-size: 2.2rem; }
-  .cal-day { font-size: 0.8rem; }
+  .counter-unit { min-width: 68px; padding: 12px 14px; }
+  .counter-unit .number { font-size: 2rem; }
+  .slide-w { margin: 0; }
 }
 </style>
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.17.1/firebase-storage-compat.js"></script>
 <script>
   firebase.initializeApp({
     apiKey: "AIzaSyAaVrYJDMnO4-WKp58Ktxr9rcZzheSrdRU",
@@ -488,91 +617,109 @@ h1, h2, h3, .handwritten {
 </head>
 <body>
 
-<!-- Floating Particles -->
 <div class="particles" id="particles"></div>
 
 <div class="container">
 
-  <!-- Header -->
   <div class="header">
-    <h1 id="namesDisplay" onclick="openNamesModal()" title="Click to edit names">loading...</h1>
+    <h1 id="namesDisplay" onclick="openNamesModal()" title="click to edit names">loading...</h1>
     <div class="subtitle">since the best day of our lives</div>
   </div>
 
-  <!-- Navigation -->
   <div class="nav-tabs">
-    <div class="nav-tab active" onclick="showPanel('counter')">us</div>
-    <div class="nav-tab" onclick="showPanel('calendar')">calendar</div>
-    <div class="nav-tab" onclick="showPanel('memories')">memories</div>
+    <div class="nav-tab active" data-panel="us">us &hearts;</div>
+    <div class="nav-tab" data-panel="story">our story</div>
+    <div class="nav-tab" data-panel="gallery">our gallery</div>
   </div>
 
-  <!-- Counter Panel -->
-  <div class="panel active" id="panel-counter">
+  <div class="panel active" id="panel-us">
     <div class="section">
       <div class="counter-wrap">
-        <div class="counter" id="counter">
+        <h3 class="counter-heading">every moment, together</h3>
+        <div class="counter">
           <div class="counter-unit"><div class="number" id="c-days">0</div><div class="label">days</div></div>
           <div class="counter-unit"><div class="number" id="c-hours">0</div><div class="label">hours</div></div>
           <div class="counter-unit"><div class="number" id="c-mins">0</div><div class="label">minutes</div></div>
           <div class="counter-unit"><div class="number" id="c-secs">0</div><div class="label">seconds</div></div>
         </div>
-        <div class="counter-sub" id="counter-sub">together and counting</div>
+        <div class="counter-sub">we've been collecting time since <b id="startDateLabel">the beginning</b> &mdash; and every second of it is ours</div>
+        <div class="milestone" id="milestone"></div>
       </div>
     </div>
   </div>
 
-  <!-- Calendar Panel -->
-  <div class="panel" id="panel-calendar">
+  <div class="panel" id="panel-story">
     <div class="section">
-      <div class="cal-header">
-        <button class="cal-nav" onclick="calNav(-1)">&#8249;</button>
-        <h3 id="cal-title"></h3>
-        <button class="cal-nav" onclick="calNav(1)">&#8250;</button>
+      <div class="section-title">our story</div>
+      <div class="toolbar">
+        <input type="text" class="search" id="storySearch" placeholder="search our story...">
+        <div class="chips">
+          <button class="chip active" data-f="all">all</button>
+          <button class="chip" data-f="memories">memories</button>
+          <button class="chip" data-f="notes">notes</button>
+        </div>
       </div>
-      <div class="cal-weekdays">
-        <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
-      </div>
-      <div class="cal-days" id="cal-days"></div>
+      <button class="btn btn-primary" onclick="openStoryModal('memory')" style="margin-bottom:16px">+ add to our story</button>
+      <div id="timeline"></div>
     </div>
   </div>
 
-  <!-- Memories Panel -->
-  <div class="panel" id="panel-memories">
+  <div class="panel" id="panel-gallery">
     <div class="section">
-      <div class="section-title">our memories</div>
-      <div class="add-memory-form">
-        <input type="text" id="mem-title" placeholder="title for this memory..." maxlength="80">
-        <textarea id="mem-text" placeholder="write something sweet..."></textarea>
-        <button class="btn btn-primary" onclick="addMemory()" style="align-self:flex-end">save memory</button>
+      <div class="section-title">our gallery</div>
+      <div class="auth-hint" id="authHint"></div>
+      <div class="upload-box" id="uploadBox">
+        <div class="big">tap to pick some photos &hearts;</div>
+        <div class="tiny">jpegs, pngs, gifs anywhere on your phone</div>
+        <input type="file" id="photoInput" accept="image/*" multiple>
       </div>
-      <div class="memories-list" id="memories-list">
-        <div class="empty-state">no memories yet. start saving your favorite moments!</div>
+      <div class="upload-meta">
+        <input type="text" id="photoCaption" placeholder="add a little caption...">
+        <button id="uploadBtn" onclick="startUpload()">save to gallery</button>
       </div>
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel"></div>
+      </div>
+      <div class="gallery-grid" id="galleryGrid"></div>
+      <div class="empty-state" id="galleryEmpty">waiting for our first photo together...</div>
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="footer">
     made with <span class="heart">&hearts;</span> for us
   </div>
 
 </div>
 
-<!-- Calendar Note Modal -->
-<div class="modal-overlay" id="noteModal">
+<div class="modal-overlay" id="storyModal">
   <div class="modal">
-    <h3 id="noteModalTitle">note for this day</h3>
-    <textarea id="noteInput" placeholder="what happened today?"></textarea>
+    <h3 id="storyModalTitle">add to our story</h3>
+    <div class="seg" id="storySeg">
+      <button data-kind="memory" class="active" onclick="setStoryKind('memory')">a memory</button>
+      <button data-kind="note" onclick="setStoryKind('note')">a little note</button>
+    </div>
+    <div class="form-field" id="titleField">
+      <label>title</label>
+      <input type="text" id="storyTitle" maxlength="80" placeholder="what should we call it?">
+    </div>
+    <div class="form-field">
+      <label id="storyBodyLabel">what happened?</label>
+      <textarea id="storyText" placeholder="write something sweet..."></textarea>
+    </div>
+    <div class="form-field">
+      <label>when?</label>
+      <input type="date" id="storyDate">
+    </div>
     <div class="modal-actions">
-      <button class="btn btn-danger" id="noteDeleteBtn" onclick="deleteNote()" style="display:none">delete</button>
+      <button class="btn btn-danger" id="storyDeleteBtn" onclick="deleteStoryEntry()" style="display:none">delete</button>
       <div style="flex:1"></div>
-      <button class="btn btn-ghost" onclick="closeNoteModal()">cancel</button>
-      <button class="btn btn-primary" onclick="saveNote()">save</button>
+      <button class="btn btn-ghost" onclick="closeStoryModal()">cancel</button>
+      <button class="btn btn-primary" onclick="saveStory()">save</button>
     </div>
   </div>
 </div>
 
-<!-- Names Modal -->
 <div class="modal-overlay" id="namesModal">
   <div class="modal">
     <h3>our names</h3>
@@ -588,28 +735,37 @@ h1, h2, h3, .handwritten {
   </div>
 </div>
 
+<div class="modal-overlay" id="lightboxModal">
+  <div class="modal" style="background:none;box-shadow:none;padding:0;max-width:92vw;text-align:center">
+    <img class="lightbox-img" id="lightboxImg" src="" alt="">
+    <div class="lightbox-cap" id="lightboxCap"></div>
+  </div>
+</div>
+
 <script>
 (function() {
   'use strict';
 
-  const db = firebase.database();
-  const ROOT = 'love-story';
-  const START_DATE = new Date('2026-08-14T06:10:00');
-  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var db = firebase.database();
+  var ROOT = 'love-story';
+  var START_DATE = new Date('2026-08-14T06:10:00');
+  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  var MONTHS_SHORT = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 
   function pad(n) { return String(n).padStart(2, '0'); }
+  function todayKey() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
   function escHtml(s) {
-    const d = document.createElement('div');
+    var d = document.createElement('div');
     d.textContent = s;
     return d.innerHTML;
   }
+  function fmtLong(y, m, d) { return MONTHS[m] + ' ' + d + ', ' + y; }
 
   /* ── Names ── */
-  let names = { name1: 'you', name2: 'your person' };
+  var names = { name1: 'you', name2: 'your person' };
   function updateNamesDisplay() {
     document.getElementById('namesDisplay').textContent = names.name1 + ' & ' + names.name2;
   }
-
   db.ref(ROOT + '/names').on('value', function(snap) {
     if (snap.val()) names = snap.val();
     updateNamesDisplay();
@@ -624,8 +780,8 @@ h1, h2, h3, .handwritten {
     document.getElementById('namesModal').classList.remove('active');
   };
   window.saveNames = function() {
-    const n1 = document.getElementById('name1Input').value.trim() || 'you';
-    const n2 = document.getElementById('name2Input').value.trim() || 'your person';
+    var n1 = document.getElementById('name1Input').value.trim() || 'you';
+    var n2 = document.getElementById('name2Input').value.trim() || 'your person';
     names = { name1: n1, name2: n2 };
     db.ref(ROOT + '/names').set(names);
     closeNamesModal();
@@ -633,14 +789,14 @@ h1, h2, h3, .handwritten {
 
   /* ── Counter ── */
   function updateCounter() {
-    const now = new Date();
-    let diff = now - START_DATE;
+    var now = new Date();
+    var diff = now - START_DATE;
     if (diff < 0) diff = 0;
-    const totalSec = Math.floor(diff / 1000);
-    const days = Math.floor(totalSec / 86400);
-    const hours = Math.floor((totalSec % 86400) / 3600);
-    const mins = Math.floor((totalSec % 3600) / 60);
-    const secs = totalSec % 60;
+    var totalSec = Math.floor(diff / 1000);
+    var days = Math.floor(totalSec / 86400);
+    var hours = Math.floor((totalSec % 86400) / 3600);
+    var mins = Math.floor((totalSec % 3600) / 60);
+    var secs = totalSec % 60;
     document.getElementById('c-days').textContent = days;
     document.getElementById('c-hours').textContent = pad(hours);
     document.getElementById('c-mins').textContent = pad(mins);
@@ -648,184 +804,522 @@ h1, h2, h3, .handwritten {
   }
   updateCounter();
   setInterval(updateCounter, 1000);
+  document.getElementById('startDateLabel').textContent = '14 aug 2026';
+
+  function milestoneText() {
+    var now = new Date();
+    var cursor = new Date(START_DATE);
+    var count = 0;
+    while (cursor <= now) {
+      count++;
+      cursor = new Date(START_DATE.getFullYear(), START_DATE.getMonth() + count, START_DATE.getDate());
+    }
+    var months = count - 1;
+    var daysLeft = Math.max(0, Math.ceil((cursor - now) / 86400000));
+    if (daysLeft === 0 && months > 0) {
+      return 'today is ' + months + ' month' + (months > 1 ? 's' : '') + ' of us &hearts;';
+    }
+    if (months === 0) return 'psst &mdash; 1 month of us in ' + daysLeft + ' day' + (daysLeft > 1 ? 's' : '');
+    return 'psst &mdash; ' + months + ' month' + (months > 1 ? 's' : '') + ' of us in ' + daysLeft + ' day' + (daysLeft > 1 ? 's' : '');
+  }
+  document.getElementById('milestone').innerHTML = milestoneText();
 
   /* ── Panels ── */
   window.showPanel = function(id) {
-    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-    document.querySelectorAll('.nav-tab').forEach(function(t) { t.classList.remove('active'); });
+    var panels = document.querySelectorAll('.panel');
+    for (var i = 0; i < panels.length; i++) panels[i].classList.remove('active');
     document.getElementById('panel-' + id).classList.add('active');
-    document.querySelectorAll('.nav-tab').forEach(function(t) {
-      if (t.textContent.toLowerCase().includes(id.substring(0,3))) t.classList.add('active');
-    });
+    var tabs = document.querySelectorAll('.nav-tab');
+    for (var j = 0; j < tabs.length; j++) {
+      tabs[j].classList.toggle('active', tabs[j].getAttribute('data-panel') === id);
+    }
   };
+  document.querySelectorAll('.nav-tab').forEach(function(t) {
+    t.addEventListener('click', function() { showPanel(t.getAttribute('data-panel')); });
+  });
 
-  /* ── Calendar ── */
-  var calYear, calMonth;
-  var today = new Date();
-  calYear = today.getFullYear();
-  calMonth = today.getMonth();
-  var calSelectedDate = null;
+  /* ── Story: data ── */
   var notesCache = {};
+  var memoriesCache = [];
+  var filterType = 'all';
+  var searchQuery = '';
+  var collapsed = {};
 
   db.ref(ROOT + '/notes').on('value', function(snap) {
     notesCache = snap.val() || {};
-    renderCalendar();
+    renderTimeline();
   });
-
-  function renderCalendar() {
-    document.getElementById('cal-title').textContent = MONTHS[calMonth] + ' ' + calYear;
-    var container = document.getElementById('cal-days');
-    container.innerHTML = '';
-
-    var firstDay = new Date(calYear, calMonth, 1);
-    var startDay = firstDay.getDay() - 1;
-    if (startDay < 0) startDay = 6;
-
-    var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-    var daysInPrev = new Date(calYear, calMonth, 0).getDate();
-
-    for (var i = 0; i < startDay; i++) {
-      var d = daysInPrev - startDay + i + 1;
-      var el = document.createElement('div');
-      el.className = 'cal-day other-month';
-      el.textContent = d;
-      container.appendChild(el);
-    }
-
-    for (var dd = 1; dd <= daysInMonth; dd++) {
-      var el = document.createElement('div');
-      el.className = 'cal-day';
-      el.textContent = dd;
-      var dateKey = calYear + '-' + pad(calMonth + 1) + '-' + pad(dd);
-      if (dateKey === today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate())) {
-        el.classList.add('today');
-      }
-      if (notesCache[dateKey]) {
-        el.classList.add('has-note');
-      }
-      (function(key) {
-        el.addEventListener('click', function() { openNoteModal(key); });
-      })(dateKey);
-      container.appendChild(el);
-    }
-
-    var totalCells = startDay + daysInMonth;
-    var remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-    for (var i = 1; i <= remaining; i++) {
-      var el = document.createElement('div');
-      el.className = 'cal-day other-month';
-      el.textContent = i;
-      container.appendChild(el);
-    }
-  }
-
-  window.calNav = function(dir) {
-    calMonth += dir;
-    if (calMonth > 11) { calMonth = 0; calYear++; }
-    if (calMonth < 0) { calMonth = 11; calYear--; }
-    renderCalendar();
-  };
-
-  function openNoteModal(dateKey) {
-    calSelectedDate = dateKey;
-    var d = new Date(dateKey + 'T12:00:00');
-    document.getElementById('noteModalTitle').textContent = MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
-    document.getElementById('noteInput').value = notesCache[dateKey] || '';
-    document.getElementById('noteDeleteBtn').style.display = notesCache[dateKey] ? 'inline-block' : 'none';
-    document.getElementById('noteModal').classList.add('active');
-  }
-  window.closeNoteModal = function() {
-    document.getElementById('noteModal').classList.remove('active');
-    calSelectedDate = null;
-  };
-
-  window.saveNote = function() {
-    if (!calSelectedDate) return;
-    var val = document.getElementById('noteInput').value.trim();
-    if (val) {
-      db.ref(ROOT + '/notes/' + calSelectedDate).set(val);
-    } else {
-      db.ref(ROOT + '/notes/' + calSelectedDate).remove();
-    }
-    closeNoteModal();
-  };
-
-  window.deleteNote = function() {
-    if (!calSelectedDate) return;
-    db.ref(ROOT + '/notes/' + calSelectedDate).remove();
-    closeNoteModal();
-  };
-
-  /* ── Memories ── */
-  var memoriesCache = [];
-
   db.ref(ROOT + '/memories').on('value', function(snap) {
     var data = snap.val() || {};
     memoriesCache = Object.keys(data).map(function(k) {
       return Object.assign({ id: k }, data[k]);
     });
-    renderMemories();
+    renderTimeline();
   });
 
-  function renderMemories() {
-    var list = document.getElementById('memories-list');
-    if (memoriesCache.length === 0) {
-      list.innerHTML = '<div class="empty-state">no memories yet. start saving your favorite moments!</div>';
-      return;
-    }
-    list.innerHTML = '';
-    var sorted = memoriesCache.slice().sort(function(a, b) {
-      return new Date(b.date) - new Date(a.date);
+  function buildItems() {
+    var items = [];
+    Object.keys(notesCache).forEach(function(k) {
+      var text = notesCache[k];
+      if (!text) return;
+      items.push({ kind: 'note', key: k, text: text });
     });
-    sorted.forEach(function(m) {
-      var card = document.createElement('div');
-      card.className = 'memory-card';
+    memoriesCache.forEach(function(m) {
       var d = new Date(m.date);
-      var dateStr = MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
-      card.innerHTML =
-        '<div class="mem-date">' + dateStr + '</div>' +
-        (m.title ? '<div class="mem-title">' + escHtml(m.title) + '</div>' : '') +
-        '<div class="mem-text">' + escHtml(m.message) + '</div>' +
-        '<button class="mem-delete" title="delete">&times;</button>';
-      (function(id) {
-        card.querySelector('.mem-delete').addEventListener('click', function() { deleteMemory(id); });
-      })(m.id);
-      list.appendChild(card);
+      if (isNaN(d.getTime())) return;
+      items.push({ kind: 'memory', id: m.id, title: m.title || '', message: m.message || '', d: d });
     });
+    return items;
   }
 
-  window.addMemory = function() {
-    var title = document.getElementById('mem-title').value.trim();
-    var message = document.getElementById('mem-text').value.trim();
-    if (!message) return;
-    db.ref(ROOT + '/memories').push({
-      title: title,
-      message: message,
-      date: new Date().toISOString()
+  function renderTimeline() {
+    var items = buildItems();
+    var groups = {};
+
+    items.forEach(function(it) {
+      var y, mo, day;
+      if (it.kind === 'note') {
+        var parts = it.key.split('-');
+        y = parseInt(parts[0], 10);
+        mo = parseInt(parts[1], 10) - 1;
+        day = parseInt(parts[2], 10);
+      } else {
+        y = it.d.getFullYear();
+        mo = it.d.getMonth();
+        day = it.d.getDate();
+      }
+      var gkey = y + '-' + mo;
+      if (!groups[gkey]) groups[gkey] = { y: y, mo: mo, items: [] };
+      groups[gkey].items.push({ it: it, day: day });
     });
-    document.getElementById('mem-title').value = '';
-    document.getElementById('mem-text').value = '';
+
+    var gkeys = Object.keys(groups).sort(function(a, b) {
+      var ka = a.split('-'); var kb = b.split('-');
+      return (parseInt(kb[0],10) - parseInt(ka[0],10)) || (parseInt(kb[1],10) - parseInt(ka[1],10));
+    });
+
+    var now = new Date();
+    var nowIndex = now.getFullYear() * 12 + now.getMonth();
+
+    var el = document.getElementById('timeline');
+    el.innerHTML = '';
+
+    var totalShown = 0;
+    gkeys.forEach(function(gkey) {
+      var g = groups[gkey];
+
+      var kept = [];
+      for (var i = 0; i < g.items.length; i++) {
+        var entry = g.items[i];
+        if (filterType === 'notes' && entry.it.kind !== 'note') continue;
+        if (filterType === 'memories' && entry.it.kind !== 'memory') continue;
+        if (searchQuery) {
+          var hay = entry.it.kind === 'note'
+            ? entry.it.text
+            : (entry.it.title + ' ' + entry.it.message);
+          if (hay.toLowerCase().indexOf(searchQuery) === -1) continue;
+        }
+        kept.push(entry);
+      }
+      if (!kept.length) return;
+      totalShown += kept.length;
+
+      var gkeyIndex = parseInt(g.y, 10) * 12 + g.mo;
+      var isCollapsed = collapsed[gkey] === true;
+      if (collapsed[gkey] === undefined) {
+        isCollapsed = gkeyIndex < nowIndex - 1;
+        collapsed[gkey] = isCollapsed;
+      }
+
+      var group = document.createElement('div');
+      group.className = 'tl-group' + (isCollapsed ? ' collapsed' : '');
+      group.setAttribute('data-gkey', gkey);
+
+      var head = document.createElement('button');
+      head.className = 'tl-month';
+      head.innerHTML = '<span class="chev">&#9660;</span> ' + MONTHS[g.mo] + ' <span class="y">' + g.y + '</span>' +
+        '<span class="count">' + kept.length + ' ' + (kept.length === 1 ? 'entry' : 'entries') + '</span>';
+      head.addEventListener('click', function() {
+        var k = group.getAttribute('data-gkey');
+        collapsed[k] = !collapsed[k];
+        group.classList.toggle('collapsed', collapsed[k]);
+      });
+
+      var itemsWrap = document.createElement('div');
+      itemsWrap.className = 'tl-items';
+
+      kept.sort(function(a, b) { return b.day - a.day; });
+      kept.forEach(function(entry) {
+        itemsWrap.appendChild(renderEntry(entry.it, entry.day, g.y, g.mo));
+      });
+
+      group.appendChild(head);
+      group.appendChild(itemsWrap);
+      el.appendChild(group);
+    });
+
+    if (totalShown === 0) {
+      var empty = document.createElement('div');
+      empty.className = 'empty-state';
+      empty.textContent = items.length === 0
+        ? 'our story is waiting for its first page. add the first chapter &hearts;'
+        : 'nothing tucked in here... try a different search &star;';
+      el.appendChild(empty);
+    }
+  }
+
+  function renderEntry(it, day, y, mo) {
+    var item = document.createElement('div');
+    item.className = 'tl-item' + (it.kind === 'note' ? ' note-item' : '');
+    item.setAttribute('data-kind', it.kind);
+    item.setAttribute('data-id', it.kind === 'note' ? it.key : (it.id || ''));
+
+    var actions = document.createElement('div');
+    actions.className = 'tl-actions';
+    var editBtn = document.createElement('button');
+    editBtn.className = 'tl-act edit';
+    editBtn.textContent = '\u270F\uFE0F';
+    editBtn.title = 'edit';
+    var delBtn = document.createElement('button');
+    delBtn.className = 'tl-act del';
+    delBtn.textContent = '\uD83D\uDDD1\uFE0F';
+    delBtn.title = 'delete';
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+
+    var body = document.createElement('div');
+    body.className = 'tl-body';
+    var tag;
+    if (it.kind === 'note') {
+      tag = document.createElement('div');
+      tag.className = 'tl-tag';
+      tag.textContent = 'a little note \uD83D\uDC8C';
+      body.appendChild(tag);
+      var txt = document.createElement('div');
+      txt.className = 'tl-text';
+      txt.textContent = it.text;
+      body.appendChild(txt);
+    } else {
+      tag = document.createElement('div');
+      tag.className = 'tl-tag';
+      tag.textContent = 'a memory \uD83E\uDDE1';
+      body.appendChild(tag);
+      if (it.title) {
+        var titleEl = document.createElement('div');
+        titleEl.className = 'tl-title';
+        titleEl.textContent = it.title;
+        body.appendChild(titleEl);
+      }
+      var mtxt = document.createElement('div');
+      mtxt.className = 'tl-text';
+      mtxt.textContent = it.message;
+      body.appendChild(mtxt);
+    }
+
+    var dateWrap = document.createElement('div');
+    dateWrap.className = 'tl-date';
+    dateWrap.innerHTML = '<div class="day">' + day + '</div><div class="mth">' + MONTHS_SHORT[mo] + '</div>';
+
+    item.appendChild(dateWrap);
+    item.appendChild(body);
+    item.appendChild(actions);
+    return item;
+  }
+
+  document.getElementById('storySearch').addEventListener('input', function(e) {
+    searchQuery = e.target.value.trim().toLowerCase();
+    renderTimeline();
+  });
+  document.querySelectorAll('.chip').forEach(function(c) {
+    c.addEventListener('click', function() {
+      document.querySelectorAll('.chip').forEach(function(x) { x.classList.remove('active'); });
+      c.classList.add('active');
+      filterType = c.getAttribute('data-f');
+      renderTimeline();
+    });
+  });
+
+  document.getElementById('timeline').addEventListener('click', function(e) {
+    var act = e.target.closest('.tl-act');
+    if (!act) return;
+    var item = e.target.closest('.tl-item');
+    if (!item) return;
+    var kind = item.getAttribute('data-kind');
+    var id = item.getAttribute('data-id');
+    if (act.classList.contains('edit')) {
+      if (kind === 'memory') {
+        var mem = memoriesCache.filter(function(m) { return m.id === id; })[0];
+        if (mem) openStoryModal('memory', { id: mem.id, title: mem.title, message: mem.message, date: mem.date });
+      } else {
+        var text = notesCache[id];
+        openStoryModal('note', { key: id, text: text });
+      }
+    } else if (act.classList.contains('del')) {
+      if (!confirm('delete this ' + kind + '?')) return;
+      if (kind === 'memory') {
+        db.ref(ROOT + '/memories/' + id).remove();
+      } else {
+        db.ref(ROOT + '/notes/' + id).remove();
+      }
+    }
+  });
+
+  /* ── Story: add / edit modal ── */
+  var storyKind = 'memory';
+  var storyEdit = null;
+
+  window.setStoryKind = function(kind) {
+    storyKind = kind;
+    document.querySelectorAll('#storySeg button').forEach(function(b) {
+      b.classList.toggle('active', b.getAttribute('data-kind') === kind);
+    });
+    document.getElementById('titleField').style.display = (kind === 'memory') ? 'block' : 'none';
+    document.getElementById('storyBodyLabel').textContent = (kind === 'memory') ? 'what happened?' : 'your little note...';
+    document.getElementById('storyModalTitle').textContent = (kind === 'memory') ? 'a memory' : 'a little note';
   };
 
-  function deleteMemory(id) {
-    db.ref(ROOT + '/memories/' + id).remove();
+  window.openStoryModal = function(kind, data) {
+    storyEdit = null;
+    document.getElementById('storyTitle').value = '';
+    document.getElementById('storyText').value = '';
+    document.getElementById('storyDate').value = todayKey();
+    document.getElementById('storyDeleteBtn').style.display = 'none';
+    setStoryKind(kind);
+
+    if (data) {
+      storyEdit = { kind: kind };
+      if (kind === 'memory') {
+        storyEdit.id = data.id;
+        document.getElementById('storyTitle').value = data.title || '';
+        document.getElementById('storyText').value = data.message || '';
+        document.getElementById('storyDate').value = keyFromDate(data.date);
+        document.getElementById('storyDeleteBtn').style.display = 'inline-block';
+      } else {
+        storyEdit.key = data.key;
+        document.getElementById('storyText').value = data.text || '';
+        document.getElementById('storyDate').value = data.key;
+        document.getElementById('storyDeleteBtn').style.display = 'inline-block';
+      }
+    }
+    document.getElementById('storyModal').classList.add('active');
+  };
+
+  function keyFromDate(d) {
+    if (typeof d === 'string' && d.length === 10 && d.indexOf('-') === 4) return d;
+    var date = new Date(d);
+    if (isNaN(date.getTime())) return todayKey();
+    return date.getFullYear() + '-' + pad(date.getMonth() + 1) + '-' + pad(date.getDate());
   }
 
-  /* ── Floating Particles ── */
-  var emojis = ['&#10084;','&#10084;','&#10084;','&#9734;','&#9733;','&#128150;','&#128151;','&#128156;','&#10024;','&#129412;'];
+  window.closeStoryModal = function() {
+    document.getElementById('storyModal').classList.remove('active');
+    storyEdit = null;
+  };
+
+  window.saveStory = function() {
+    var text = document.getElementById('storyText').value.trim();
+    var dateVal = document.getElementById('storyDate').value || todayKey();
+
+    if (storyKind === 'note') {
+      if (!text) return;
+      if (storyEdit && storyEdit.kind === 'note' && storyEdit.key) {
+        db.ref(ROOT + '/notes/' + storyEdit.key).set(text);
+      } else if (notesCache[dateVal] && notesCache[dateVal].trim() !== text) {
+        db.ref(ROOT + '/notes/' + dateVal).set(notesCache[dateVal] + '\n' + text);
+      } else {
+        db.ref(ROOT + '/notes/' + dateVal).set(text);
+      }
+      closeStoryModal();
+      return;
+    }
+
+    var title = document.getElementById('storyTitle').value.trim();
+    if (!title && !text) return;
+    var iso = new Date(dateVal + 'T12:00:00').toISOString();
+    if (storyEdit && storyEdit.id) {
+      db.ref(ROOT + '/memories/' + storyEdit.id).update({ title: title, message: text, date: iso });
+    } else {
+      db.ref(ROOT + '/memories').push({ title: title, message: text, date: iso });
+    }
+    closeStoryModal();
+  };
+
+  window.deleteStoryEntry = function() {
+    if (!storyEdit) return;
+    if (!confirm('delete this entry?')) return;
+    if (storyEdit.kind === 'note') {
+      db.ref(ROOT + '/notes/' + storyEdit.key).remove();
+    } else {
+      db.ref(ROOT + '/memories/' + storyEdit.id).remove();
+    }
+    closeStoryModal();
+  };
+
+  /* ── Gallery ── */
+  var authReady = false;
+  var photosCache = [];
+  var pendingFiles = [];
+
+  firebase.auth().onAuthStateChanged(function(user) {
+    authReady = !!user;
+    updateUploadUI();
+  });
+  firebase.auth().signInAnonymously().catch(function(err) {
+    authReady = false;
+    var hint = document.getElementById('authHint');
+    hint.innerHTML = '<b>can&rsquo;t sign in to save photos yet &star;</b><br>In the Firebase console open <b>Build &rarr; Authentication &rarr; Sign-in method</b> and turn on <b>Anonymous</b>, then press the button below.' +
+      '<br><button onclick="firebase.auth().signInAnonymously()">I did it, try again</button>';
+    hint.classList.add('show');
+  });
+
+  function updateUploadUI() {
+    var box = document.getElementById('uploadBox');
+    var m = document.getElementById('uploadBtn');
+    box.style.opacity = authReady ? '1' : '0.5';
+    m.disabled = !authReady;
+  }
+
+  db.ref(ROOT + '/photos').on('value', function(snap) {
+    var data = snap.val() || {};
+    photosCache = Object.keys(data).map(function(k) {
+      return Object.assign({ id: k }, data[k]);
+    });
+    renderPhotos();
+  });
+
+  function renderPhotos() {
+    var grid = document.getElementById('galleryGrid');
+    var empty = document.getElementById('galleryEmpty');
+    grid.innerHTML = '';
+    empty.style.display = photosCache.length ? 'none' : 'block';
+
+    var sorted = photosCache.slice().sort(function(a, b) {
+      return new Date(b.date) - new Date(a.date);
+    });
+    var rots = [-2, 1, -1, 2, 0, -2, 1];
+    sorted.forEach(function(p, idx) {
+      var card = document.createElement('div');
+      card.className = 'polaroid';
+      card.style.setProperty('--r', rots[idx % rots.length] + 'deg');
+      var img = document.createElement('img');
+      img.src = p.url;
+      img.loading = 'lazy';
+      img.alt = p.caption || 'a photo of us';
+      img.addEventListener('click', function() { openLightbox(p.url, p.caption); });
+      var cap = document.createElement('div');
+      cap.className = 'cap';
+      cap.textContent = p.caption || '';
+      var pdate = document.createElement('div');
+      pdate.className = 'pdate';
+      var d = new Date(p.date);
+      pdate.textContent = MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+      var del = document.createElement('button');
+      del.className = 'pdel';
+      del.textContent = '\u00D7';
+      del.addEventListener('click', function() { deletePhoto(p); });
+      card.appendChild(img);
+      card.appendChild(cap);
+      card.appendChild(pdate);
+      card.appendChild(del);
+      grid.appendChild(card);
+    });
+  }
+
+  document.getElementById('uploadBox').addEventListener('click', function() {
+    if (authReady) document.getElementById('photoInput').click();
+  });
+  document.getElementById('photoInput').addEventListener('change', function() {
+    pendingFiles = Array.prototype.slice.call(this.files).filter(function(f) {
+      return f.type.indexOf('image/') === 0;
+    });
+    var cap = document.getElementById('photoCaption');
+    cap.value = '';
+    var label = document.querySelector('#uploadBox .big');
+    label.innerHTML = pendingFiles.length ? pendingFiles.length + ' photo' + (pendingFiles.length > 1 ? 's' : '') + ' picked &hearts;' : 'tap to pick some photos &hearts;';
+  });
+
+  function cleanName(name) {
+    return name.replace(/[^a-zA-Z0-9._-]/g, '').replace(/\.+/g, '.').slice(0, 60) || 'photo.jpg';
+  }
+
+  window.startUpload = function() {
+    if (!authReady || !pendingFiles.length) return;
+    var caption = document.getElementById('photoCaption').value.trim();
+    var wrap = document.getElementById('progressWrap');
+    var fill = document.getElementById('progressFill');
+    var label = document.getElementById('progressLabel');
+    wrap.classList.add('show');
+    fill.style.width = '0%';
+    label.textContent = 'uploading 0 of ' + pendingFiles.length + '...';
+
+    var done = 0;
+    pendingFiles.forEach(function(file, i) {
+      var path = 'photos/' + Date.now() + '_' + i + '_' + cleanName(file.name);
+      var task = firebase.storage().ref(path).put(file);
+      task.on('state_changed',
+        function(snap) {
+          var base = done / pendingFiles.length;
+          var part = (snap.bytesTransferred / snap.totalBytes) / pendingFiles.length;
+          fill.style.width = Math.round((base + part) * 100) + '%';
+        },
+        function() {
+          done++;
+          label.textContent = 'a photo slipped away (' + done + '/' + pendingFiles.length + ') \u2014 try it again?';
+          if (done === pendingFiles.length) setTimeout(function() { wrap.classList.remove('show'); }, 2500);
+        },
+        function() {
+          task.snapshot.ref.getDownloadURL().then(function(url) {
+            db.ref(ROOT + '/photos').push({
+              url: url,
+              caption: caption,
+              date: new Date().toISOString(),
+              path: path
+            });
+            done++;
+            label.textContent = 'saving ' + done + ' of ' + pendingFiles.length + '...';
+            if (done === pendingFiles.length) {
+              fill.style.width = '100%';
+              label.textContent = 'all tucked into the album &hearts;';
+              pendingFiles = [];
+              document.getElementById('photoInput').value = '';
+              document.querySelector('#uploadBox .big').innerHTML = 'tap to pick some photos &hearts;';
+              setTimeout(function() { wrap.classList.remove('show'); }, 2200);
+            }
+          });
+        }
+      );
+    });
+  };
+
+  function deletePhoto(p) {
+    if (!confirm('delete this photo?')) return;
+    if (p.path) {
+      firebase.storage().ref(p.path).delete().catch(function() {});
+    }
+    db.ref(ROOT + '/photos/' + p.id).remove();
+  }
+
+  function openLightbox(url, caption) {
+    document.getElementById('lightboxImg').src = url;
+    document.getElementById('lightboxCap').textContent = caption || '';
+    document.getElementById('lightboxModal').classList.add('active');
+  }
+
+  /* ── Floating sparkles ── */
+  var emojis = ['&#10084;','&#128150;','&#128151;','&#10024;','&#8270;','&#127800;','&#127799;','&#128149;'];
   function spawnParticle() {
     var el = document.createElement('span');
     el.className = 'particle';
     el.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
     el.style.left = Math.random() * 100 + '%';
-    el.style.fontSize = (14 + Math.random() * 16) + 'px';
-    el.style.animationDuration = (6 + Math.random() * 8) + 's';
+    el.style.fontSize = (13 + Math.random() * 16) + 'px';
+    el.style.animationDuration = (7 + Math.random() * 9) + 's';
     el.style.animationDelay = (Math.random() * 2) + 's';
     document.getElementById('particles').appendChild(el);
-    setTimeout(function() { el.remove(); }, 16000);
+    setTimeout(function() { el.remove(); }, 18000);
   }
-  setInterval(spawnParticle, 800);
-  for (var i = 0; i < 8; i++) setTimeout(spawnParticle, i * 300);
+  setInterval(spawnParticle, 900);
+  for (var i = 0; i < 8; i++) setTimeout(spawnParticle, i * 350);
 
   /* ── Close modals on overlay click ── */
   document.querySelectorAll('.modal-overlay').forEach(function(ov) {
@@ -841,8 +1335,7 @@ h1, h2, h3, .handwritten {
     }
   });
 
-  renderCalendar();
-
+  renderTimeline();
 })();
 </script>
 </body>
