@@ -1251,23 +1251,49 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
     var label = document.getElementById('progressLabel');
     wrap.classList.add('show');
     fill.style.width = '0%';
+    label.style.color = '';
     label.textContent = 'uploading 0 of ' + pendingFiles.length + '...';
 
     var done = 0;
+    var stalled = false;
+    var stallTimer = null;
+
+    function checkStall() {
+      if (stalled || done >= pendingFiles.length) return;
+      stalled = true;
+      label.style.color = '#e05262';
+      label.textContent = 'the upload seems stuck. ' +
+        'Press F12 and watch the Console + Network tab while retrying, then tell me what appears. ' +
+        'Also try a small photo (under 2MB) to rule out size/connection limits.';
+      console.error('[gallery] upload stalled. bucket:', firebase.storage().ref().bucket);
+      console.error('[gallery] signed in:', !!firebase.auth().currentUser);
+      console.error('[gallery] pending:', pendingFiles.length, 'done:', done);
+    }
+
     pendingFiles.forEach(function(file, i) {
       var path = 'photos/' + Date.now() + '_' + i + '_' + cleanName(file.name);
+      console.info('[gallery] starting upload', i, file.name, file.size + ' bytes');
       var task = firebase.storage().ref(path).put(file);
+      stallTimer = setTimeout(checkStall, 45000);
       task.on('state_changed',
         function(snap) {
+          clearTimeout(stallTimer);
+          stalled = false;
           var base = done / pendingFiles.length;
           var part = (snap.bytesTransferred / snap.totalBytes) / pendingFiles.length;
           fill.style.width = Math.round((base + part) * 100) + '%';
+          label.style.color = '';
+          label.textContent = 'uploading ' + Math.round(snap.bytesTransferred / 1048576 * 10) / 10 + ' MB of ' + Math.round(snap.totalBytes / 1048576 * 10) / 10 + ' MB...';
+          stallTimer = setTimeout(checkStall, 45000);
+          if (i === 0) console.info('[gallery] transferred', snap.bytesTransferred, 'of', snap.totalBytes);
         },
         function(err) {
+          clearTimeout(stallTimer);
           done++;
+          console.error('[gallery] upload error', err && err.code, err && err.message);
           label.textContent = escHtml((err && err.code + ': ' + err.message) || 'upload failed') + ' (' + done + '/' + pendingFiles.length + ')';
           label.style.color = '#e05262';
-          if (done === pendingFiles.length) setTimeout(function() { wrap.classList.remove('show'); }, 4000);
+          if (done === pendingFiles.length) setTimeout(function() { wrap.classList.remove('show'); }, 6000);
         },
         function() {
           task.snapshot.ref.getDownloadURL().then(function(url) {
