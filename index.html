@@ -177,18 +177,6 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
 }
 .counter-sub b { color: var(--rose-deep); font-weight: 700; }
 
-.milestone {
-  margin: 16px auto 0;
-  display: inline-block;
-  padding: 9px 22px;
-  border-radius: 30px;
-  border: 2px dashed var(--rose-soft);
-  background: rgba(255,224,238,0.6);
-  font-family: 'Kalam', cursive;
-  font-size: 1.1rem;
-  color: var(--rose-deep);
-}
-
 /* ── Story toolbar ── */
 .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 18px; }
 .toolbar .search {
@@ -569,6 +557,203 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
 .panel { display: none; }
 .panel.active { display: block; }
 
+/* ── Wellness ── */
+.sub-heading {
+  font-family: 'Kalam', cursive;
+  font-size: 1.4rem;
+  color: var(--lav);
+  margin: 4px 0 12px;
+}
+.meds-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.med-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 10px 12px;
+  box-shadow: 0 4px 12px rgba(178,127,190,0.1);
+}
+.med-info { flex: 1; min-width: 0; }
+.med-name { font-family: 'Kalam', cursive; font-size: 1.2rem; color: var(--ink); line-height: 1.15; word-break: break-word; }
+.med-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+.med-dots { display: flex; gap: 4px; align-items: center; }
+.dot { width: 11px; height: 11px; border-radius: 50%; background: #f0e2ef; flex-shrink: 0; }
+.dot.on { background: linear-gradient(135deg, var(--rose), var(--lav)); }
+.dot.today { outline: 2px solid var(--rose-soft); outline-offset: 1px; }
+.med-toggle { position: relative; width: 46px; height: 26px; flex-shrink: 0; cursor: pointer; }
+.med-toggle input { opacity: 0; position: absolute; inset: 0; cursor: pointer; margin: 0; }
+.med-slider {
+  position: absolute;
+  inset: 0;
+  background: #efe1ee;
+  border-radius: 20px;
+  transition: background 0.2s;
+}
+.med-slider::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  transition: transform 0.2s;
+}
+.med-toggle input:checked + .med-slider { background: linear-gradient(135deg, var(--rose), var(--lav)); }
+.med-toggle input:checked + .med-slider::after { transform: translateX(20px); }
+.med-del {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: #fde7ea;
+  color: #e05262;
+  cursor: pointer;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+.add-row { display: flex; gap: 8px; }
+.add-row input {
+  flex: 1;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 30px;
+  padding: 9px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  color: var(--ink);
+  outline: none;
+}
+.add-row input:focus { border-color: var(--rose); }
+
+.bp-latest { text-align: center; padding: 10px 0 4px; }
+.bp-empty { font-family: 'Kalam', cursive; font-size: 1.2rem; color: var(--muted); padding: 10px; }
+.bp-big { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
+.bp-num {
+  font-family: 'Patrick Hand', cursive;
+  font-size: 3rem;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--rose), var(--peach), var(--lav));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.bp-sep { font-family: 'Patrick Hand', cursive; font-size: 2rem; color: var(--muted); }
+.bp-pulse { font-family: 'Kalam', cursive; font-size: 1.15rem; color: var(--muted); margin-left: 8px; }
+.bp-when { font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+.bp-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  background: #fdf6fa;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 12px;
+  margin: 12px 0 16px;
+}
+.bp-form input[type=number] {
+  width: 88px;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.95rem;
+  color: var(--ink);
+  outline: none;
+}
+.bp-form input[type=datetime-local] {
+  flex: 1;
+  min-width: 150px;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  color: var(--ink);
+  outline: none;
+}
+.bp-form input:focus { border-color: var(--rose); }
+.bp-form .bp-slash { font-family: 'Patrick Hand', cursive; font-size: 1.4rem; color: var(--muted); }
+.bp-chart-wrap {
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 10px;
+  margin-bottom: 16px;
+}
+#bpChart { width: 100%; height: 140px; display: block; }
+.bp-list { display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
+.bp-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 8px 12px;
+}
+.bp-time { font-size: 0.78rem; color: var(--muted); flex-shrink: 0; width: 110px; }
+.bp-val { flex: 1; font-weight: 700; color: var(--ink); }
+.bp-del {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: #fde7ea;
+  color: #e05262;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* ── Lock screen ── */
+body.locked { overflow: hidden; }
+.lock-screen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #fff1f6, #f6ecff, #e9f2ff);
+  padding: 20px;
+}
+.lock-screen.active { display: flex; }
+.lock-box {
+  background: #fff;
+  border-radius: 28px;
+  padding: 40px 34px;
+  box-shadow: 0 30px 70px rgba(120,60,130,0.25);
+  border: 1px solid var(--card-border);
+  max-width: 380px;
+  width: 100%;
+  text-align: center;
+}
+.lock-heart { font-size: 2.6rem; color: var(--rose); animation: heartbeat 1.2s infinite; display: inline-block; }
+.lock-box h3 { font-family: 'Kalam', cursive; font-size: 1.7rem; color: var(--rose-deep); margin: 8px 0 4px; }
+.lock-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 18px; }
+.lock-box input {
+  width: 100%;
+  background: #fdf6fa;
+  border: 1px solid #f1d6e6;
+  border-radius: 14px;
+  padding: 12px 14px;
+  font-size: 1rem;
+  color: var(--ink);
+  outline: none;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.lock-box input:focus { border-color: var(--rose); }
+#lockErr { color: #e05262; font-size: 0.85rem; margin-top: 10px; min-height: 18px; }
+.lock-btn { margin-bottom: 16px; }
+
 @media (max-width: 600px) {
   .container { padding: 12px; }
   .section { padding: 20px; }
@@ -606,6 +791,7 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
   <div class="nav-tabs">
     <div class="nav-tab active" data-panel="us">us &hearts;</div>
     <div class="nav-tab" data-panel="story">our story</div>
+    <div class="nav-tab" data-panel="wellness">wellness</div>
     <div class="nav-tab" data-panel="gallery">our gallery</div>
   </div>
 
@@ -620,7 +806,6 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
           <div class="counter-unit"><div class="number" id="c-secs">0</div><div class="label">seconds</div></div>
         </div>
         <div class="counter-sub">we've been collecting time since <b id="startDateLabel">the beginning</b> &mdash; and every second of it is ours</div>
-        <div class="milestone" id="milestone"></div>
       </div>
     </div>
   </div>
@@ -638,6 +823,34 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
       </div>
       <button class="btn btn-primary" onclick="openStoryModal('memory')" style="margin-bottom:16px">+ add to our story</button>
       <div id="timeline"></div>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-wellness">
+    <div class="section">
+      <div class="section-title">her wellness</div>
+      <div class="sub-heading">meds</div>
+      <div class="meds-list" id="medsList"></div>
+      <div class="add-row">
+        <input type="text" id="medNameInput" placeholder="name of a med..." maxlength="40">
+        <button class="btn btn-ghost" onclick="addMed()">add med</button>
+      </div>
+    </div>
+    <div class="section">
+      <div class="section-title">blood pressure</div>
+      <div class="bp-latest" id="bpLatest"></div>
+      <form class="bp-form" onsubmit="saveBp(event)">
+        <input type="number" id="bpSys" placeholder="120" min="40" max="260" required>
+        <span class="bp-slash">/</span>
+        <input type="number" id="bpDia" placeholder="80" min="20" max="180" required>
+        <input type="number" id="bpPulse" placeholder="pulse" min="30" max="250">
+        <input type="datetime-local" id="bpWhen" required>
+        <button type="submit" class="btn btn-primary">save</button>
+      </form>
+      <div class="bp-chart-wrap">
+        <svg id="bpChart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="bp-list" id="bpList"></div>
     </div>
   </div>
 
@@ -663,7 +876,8 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
   </div>
 
   <div class="footer">
-    made with <span class="heart">&hearts;</span> for us
+    <button class="btn btn-ghost lock-btn" onclick="lockSite()">&#128274; lock</button>
+    <div>made with <span class="heart">&hearts;</span> for us</div>
   </div>
 
 </div>
@@ -715,6 +929,17 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
   <div class="modal" style="background:none;box-shadow:none;padding:0;max-width:92vw;text-align:center">
     <img class="lightbox-img" id="lightboxImg" src="" alt="">
     <div class="lightbox-cap" id="lightboxCap"></div>
+  </div>
+</div>
+
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-box">
+    <div class="lock-heart">&hearts;</div>
+    <h3>ours &mdash; please don&rsquo;t peek</h3>
+    <p class="lock-sub">it&rsquo;s just for us two</p>
+    <input type="password" id="lockInput" placeholder="our secret password" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <button class="btn btn-primary" onclick="tryUnlock()" style="width:100%">unlock</button>
+    <div class="lock-err" id="lockErr"></div>
   </div>
 </div>
 
@@ -781,24 +1006,6 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
   updateCounter();
   setInterval(updateCounter, 1000);
   document.getElementById('startDateLabel').textContent = '14 aug 2026';
-
-  function milestoneText() {
-    var now = new Date();
-    var cursor = new Date(START_DATE);
-    var count = 0;
-    while (cursor <= now) {
-      count++;
-      cursor = new Date(START_DATE.getFullYear(), START_DATE.getMonth() + count, START_DATE.getDate());
-    }
-    var months = count - 1;
-    var daysLeft = Math.max(0, Math.ceil((cursor - now) / 86400000));
-    if (daysLeft === 0 && months > 0) {
-      return 'today is ' + months + ' month' + (months > 1 ? 's' : '') + ' of us &hearts;';
-    }
-    if (months === 0) return 'psst &mdash; 1 month of us in ' + daysLeft + ' day' + (daysLeft > 1 ? 's' : '');
-    return 'psst &mdash; ' + months + ' month' + (months > 1 ? 's' : '') + ' of us in ' + daysLeft + ' day' + (daysLeft > 1 ? 's' : '');
-  }
-  document.getElementById('milestone').innerHTML = milestoneText();
 
   /* ── Panels ── */
   window.showPanel = function(id) {
@@ -1011,7 +1218,284 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
       document.querySelectorAll('.chip').forEach(function(x) { x.classList.remove('active'); });
       c.classList.add('active');
       filterType = c.getAttribute('data-f');
-      renderTimeline();
+/* ── Door lock ── */
+  var PASSWORD_HASH = '6d4198bcd2d0a05d';
+  var LOCK_KEY = 'lovestory-open-v1';
+
+  function fnv1a(s, seed) {
+    var h = seed;
+    for (var i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = (h * 16777619) >>> 0;
+    }
+    return ('0000000' + (h >>> 0).toString(16)).slice(-8);
+  }
+  function passwordOk(input) {
+    return fnv1a(input, 2166136261) + fnv1a(input, (2166136261 ^ 0x9e3779b9) >>> 0) === PASSWORD_HASH;
+  }
+  window.tryUnlock = function() {
+    var el = document.getElementById('lockInput');
+    var err = document.getElementById('lockErr');
+    if (passwordOk(el.value)) {
+      try { localStorage.setItem(LOCK_KEY, 'yes'); } catch (e) {}
+      document.getElementById('lockScreen').classList.remove('active');
+      document.body.classList.remove('locked');
+      el.value = '';
+      err.textContent = '';
+    } else {
+      err.textContent = 'hmm, that doesn\u2019t look right \uD83C\uDF1F';
+      el.value = '';
+      el.focus();
+    }
+  };
+  window.lockSite = function() {
+    try { localStorage.removeItem(LOCK_KEY); } catch (e) {}
+    document.getElementById('lockScreen').classList.add('active');
+    document.getElementById('lockInput').value = '';
+    document.body.classList.add('locked');
+    document.getElementById('lockInput').focus();
+  };
+  document.getElementById('lockInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); tryUnlock(); }
+  });
+  (function() {
+    var open = false;
+    try { open = localStorage.getItem(LOCK_KEY) === 'yes'; } catch (e) {}
+    if (!open) {
+      document.getElementById('lockScreen').classList.add('active');
+      document.body.classList.add('locked');
+      document.getElementById('lockInput').focus();
+    }
+  })();
+
+  /* ── Wellness ── */
+  var medsCache = [];
+  var medsDays = {};
+
+  db.ref(ROOT + '/health/meds').on('value', function(snap) {
+    var data = snap.val() || {};
+    medsCache = Object.keys(data).map(function(k) {
+      return Object.assign({ id: k }, data[k]);
+    }).sort(function(a, b) {
+      return (a.created || '') < (b.created || '') ? -1 : 1;
+    });
+    renderMeds();
+  });
+
+  db.ref(ROOT + '/health/medsTimeline').on('value', function(snap) {
+    medsDays = snap.val() || {};
+    renderMeds();
+  });
+
+  function medTaken(medId, dayKey) {
+    return !!(medsDays[medId] && medsDays[medId][dayKey]);
+  }
+
+  function renderMeds() {
+    var list = document.getElementById('medsList');
+    list.innerHTML = '';
+    if (!medsCache.length) {
+      list.innerHTML = '<div class="empty-state">no meds yet. add the first one below &hearts;</div>';
+      return;
+    }
+    var now = new Date();
+    medsCache.forEach(function(m) {
+      var row = document.createElement('div');
+      row.className = 'med-row';
+      row.setAttribute('data-medid', m.id);
+
+      var info = document.createElement('div');
+      info.className = 'med-info';
+      var name = document.createElement('div');
+      name.className = 'med-name';
+      name.textContent = m.name;
+      var streak = streakDays(m.id);
+      var sub = document.createElement('div');
+      sub.className = 'med-sub';
+      sub.textContent = streak ? streak + '-day streak \uD83D\uDC9B' : 'no streak yet \uD83C\uDF3B';
+      info.appendChild(name);
+      info.appendChild(sub);
+
+      var dots = document.createElement('div');
+      dots.className = 'med-dots';
+      for (var i = 6; i >= 0; i--) {
+        var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+        var key = keyOfDate(d);
+        var dot = document.createElement('span');
+        dot.className = 'dot' + (medTaken(m.id, key) ? ' on' : '') + (i === 0 ? ' today' : '');
+        dots.appendChild(dot);
+      }
+
+      var toggle = document.createElement('label');
+      toggle.className = 'med-toggle';
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = medTaken(m.id, todayKey());
+      cb.addEventListener('change', function(e) {
+        var ref = db.ref(ROOT + '/health/medsTimeline/' + m.id + '/' + todayKey());
+        if (e.target.checked) ref.set(true); else ref.remove();
+      });
+      var slider = document.createElement('span');
+      slider.className = 'med-slider';
+      toggle.appendChild(cb);
+      toggle.appendChild(slider);
+
+      var del = document.createElement('button');
+      del.className = 'med-del';
+      del.textContent = '\u00D7';
+      del.addEventListener('click', function() { deleteMed(m.id); });
+
+      row.appendChild(info);
+      row.appendChild(dots);
+      row.appendChild(toggle);
+      row.appendChild(del);
+      list.appendChild(row);
+    });
+  }
+
+  function keyOfDate(d) {
+    return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  }
+
+  function streakDays(medId) {
+    var now = new Date();
+    var start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    if (!medTaken(medId, keyOfDate(start))) start.setDate(start.getDate() - 1);
+    var n = 0;
+    while (medTaken(medId, keyOfDate(start))) {
+      n++;
+      start.setDate(start.getDate() - 1);
+    }
+    return n;
+  }
+
+  window.addMed = function() {
+    var input = document.getElementById('medNameInput');
+    var name = input.value.trim();
+    if (!name) return;
+    db.ref(ROOT + '/health/meds').push({ name: name, created: new Date().toISOString() });
+    input.value = '';
+  };
+  window.deleteMed = function(id) {
+    if (!confirm('remove this med from the list?')) return;
+    db.ref(ROOT + '/health/meds/' + id).remove();
+    db.ref(ROOT + '/health/medsTimeline/' + id).remove();
+  };
+  document.getElementById('medNameInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); addMed(); }
+  });
+
+  /* ── Blood pressure ── */
+  var bpCache = [];
+
+  db.ref(ROOT + '/health/bp').on('value', function(snap) {
+    var data = snap.val() || {};
+    bpCache = Object.keys(data).map(function(k) {
+      return Object.assign({ id: k }, data[k]);
+    }).sort(function(a, b) {
+      return new Date(b.date) - new Date(a.date);
+    });
+    renderBp();
+  });
+
+  function nowLocalValue() {
+    var d = new Date();
+    d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    return d.toISOString().slice(0, 16);
+  }
+  document.getElementById('bpWhen').value = nowLocalValue();
+
+  window.saveBp = function(e) {
+    e.preventDefault();
+    var sys = parseFloat(document.getElementById('bpSys').value);
+    var dia = parseFloat(document.getElementById('bpDia').value);
+    var pulseRaw = document.getElementById('bpPulse').value.trim();
+    if (!sys || !dia) return;
+    var when = document.getElementById('bpWhen').value;
+    if (!when) return;
+    db.ref(ROOT + '/health/bp').push({
+      sys: Math.round(sys),
+      dia: Math.round(dia),
+      pulse: pulseRaw === '' ? null : Math.round(parseFloat(pulseRaw)),
+      date: new Date(when).toISOString()
+    });
+    document.getElementById('bpSys').value = '';
+    document.getElementById('bpDia').value = '';
+    document.getElementById('bpPulse').value = '';
+  };
+
+  function fmtWhen(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return '';
+    return MONTHS[d.getMonth()] + ' ' + d.getDate() + ' \u00B7 ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+  }
+
+  function renderBp() {
+    var latestEl = document.getElementById('bpLatest');
+    var latest = bpCache[0];
+    if (!latest) {
+      latestEl.innerHTML = '<div class="bp-empty">no readings yet \u2014 take the first one &hearts;</div>';
+    } else {
+      latestEl.innerHTML =
+        '<div class="bp-big"><span class="bp-num">' + latest.sys + '</span><span class="bp-sep">/</span><span class="bp-num">' + latest.dia + '</span>' +
+        (latest.pulse ? '<span class="bp-pulse">pulse ' + latest.pulse + '</span>' : '') + '</div>' +
+        '<div class="bp-when">' + fmtWhen(latest.date) + '</div>';
+    }
+    renderBpChart();
+    renderBpList();
+  }
+
+  function renderBpList() {
+    var list = document.getElementById('bpList');
+    list.innerHTML = '';
+    if (!bpCache.length) return;
+    bpCache.slice(0, 40).forEach(function(r) {
+      var row = document.createElement('div');
+      row.className = 'bp-row';
+      var time = document.createElement('div');
+      time.className = 'bp-time';
+      time.textContent = fmtWhen(r.date);
+      var val = document.createElement('div');
+      val.className = 'bp-val';
+      val.textContent = r.sys + '/' + r.dia + (r.pulse ? ' \u00B7 pulse ' + r.pulse : '');
+      var del = document.createElement('button');
+      del.className = 'bp-del';
+      del.textContent = '\u00D7';
+      del.addEventListener('click', function() {
+        if (confirm('delete this reading?')) db.ref(ROOT + '/health/bp/' + r.id).remove();
+      });
+      row.appendChild(time);
+      row.appendChild(val);
+      row.appendChild(del);
+      list.appendChild(row);
+    });
+  }
+
+  function renderBpChart() {
+    var svg = document.getElementById('bpChart');
+    svg.innerHTML = '';
+    if (bpCache.length < 2) return;
+    var recent = bpCache.slice(0, 15).reverse();
+    var all = [];
+    recent.forEach(function(r) { all.push(r.sys, r.dia); });
+    var min = Math.min.apply(null, all) - 8;
+    var max = Math.max.apply(null, all) + 8;
+    var W = 600, H = 180, padX = 34, padY = 14;
+    function px(i, v) {
+      var x = padX + (W - padX * 2) * i / (recent.length - 1);
+      var y = padY + (H - padY * 2) * (1 - (v - min) / (max - min));
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }
+    var sysLine = recent.map(function(r, i) { return px(i, r.sys); }).join(' ');
+    var diaLine = recent.map(function(r, i) { return px(i, r.dia); }).join(' ');
+    svg.innerHTML =
+      '<polyline points="' + diaLine + '" fill="none" stroke="#a98cf5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.7"/>' +
+      '<polyline points="' + sysLine + '" fill="none" stroke="#f2699d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<text x="6" y="' + (padY + 12) + '" font-size="13" fill="#c0a9cd">' + Math.round(max) + '</text>' +
+      '<text x="6" y="' + (H - padY + 4) + '" font-size="13" fill="#c0a9cd">' + Math.round(min) + '</text>';
+  }
+
+  renderTimeline();
     });
   });
 
