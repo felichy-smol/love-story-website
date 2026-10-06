@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Our Love Story</title>
+<link rel="icon" type="image/png" href="gengar-mini.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Nunito:wght@300;400;600;700&family=Patrick+Hand&display=swap" rel="stylesheet">
@@ -14,22 +15,25 @@
   --rose: #f2699d;
   --rose-deep: #e2558a;
   --rose-soft: #ffd6e5;
-  --lav: #a98cf5;
-  --lav-soft: #e2daee;
-  --sky: #6ea8f8;
+  --lav: #7a62da;
+  --lav-soft: #e5defb;
+  --sky: #b7a7ef;
   --peach: #ffb27a;
-  --ink: #5c3f63;
-  --muted: #a48bb0;
-  --card: rgba(255,255,255,0.78);
-  --card-border: #f3dbe9;
-  --shadow: 0 10px 34px rgba(178,127,190,0.16);
+  --ink: #3f3360;
+  --muted: #9c8db5;
+  --card: rgba(255,255,255,0.8);
+  --card-border: #eeddf2;
+  --shadow: 0 10px 34px rgba(122,98,218,0.14);
 }
 
 html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Nunito', sans-serif;
-  background: linear-gradient(160deg, #fff1f6 0%, #f6ecff 45%, #e9f2ff 100%);
+  background:
+    radial-gradient(1100px 700px at 6% 0%, rgba(122,98,218,0.16), transparent 60%),
+    radial-gradient(1000px 700px at 96% 100%, rgba(242,105,157,0.20), transparent 60%),
+    linear-gradient(160deg, #f1e9ff 0%, #faf1f8 50%, #fff0f6 100%);
   background-attachment: fixed;
   color: var(--ink);
   min-height: 100vh;
@@ -82,6 +86,40 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
   color: var(--muted);
   margin-top: 6px;
 }
+.mascots {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 52px;
+  margin-bottom: 18px;
+}
+.mascot { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.mascot-img {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 10px 26px rgba(122,98,218,0.28);
+  transition: transform 0.25s;
+}
+.mascot-img.gengar { border: 3px solid var(--lav); background: #e4dcff; }
+.mascot-img.clefairy { border: 3px solid var(--rose); background: #ffe3ef; }
+.mascot-img:hover { transform: translateY(-3px) rotate(-2deg); }
+.mascot-tag {
+  font-family: 'Kalam', cursive;
+  font-size: 0.95rem;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.bg-sprite {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.06;
+  transition: opacity 0.4s;
+}
+.bg-sprite.s-gengar { top: 40px; left: 12px; width: 210px; transform: rotate(-6deg); }
+.bg-sprite.s-clefairy { bottom: 30px; right: 14px; width: 200px; transform: rotate(6deg); }
 
 /* ── Nav tabs ── */
 .nav-tabs {
@@ -104,10 +142,10 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
 }
 .nav-tab:hover { background: rgba(255,255,255,0.95); color: var(--rose-deep); transform: translateY(-1px); }
 .nav-tab.active {
-  background: linear-gradient(135deg, #ff9cbf, #c9adf7);
+  background: linear-gradient(135deg, var(--rose), var(--lav));
   color: #fff;
   border-color: transparent;
-  box-shadow: 0 6px 18px rgba(230,120,170,0.35);
+  box-shadow: 0 6px 18px rgba(139,105,219,0.4);
 }
 
 /* ── Cards ── */
@@ -826,7 +864,10 @@ body.locked { overflow: hidden; }
   z-index: 1000;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(160deg, #fff1f6, #f6ecff, #e9f2ff);
+  background:
+    radial-gradient(900px 600px at 10% 0%, rgba(122,98,218,0.18), transparent 60%),
+    radial-gradient(800px 600px at 92% 100%, rgba(242,105,157,0.22), transparent 60%),
+    linear-gradient(160deg, #f1e9ff, #faf1f8, #fff0f6);
   padding: 20px;
 }
 .lock-screen.active { display: flex; }
@@ -841,6 +882,16 @@ body.locked { overflow: hidden; }
   text-align: center;
 }
 .lock-heart { font-size: 2.6rem; color: var(--rose); animation: heartbeat 1.2s infinite; display: inline-block; }
+.lock-duo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-bottom: 6px;
+}
+.lock-duo img { width: 68px; height: 68px; border-radius: 50%; object-fit: cover; }
+.lock-duo img.g { border: 3px solid var(--lav); }
+.lock-duo img.c { border: 3px solid var(--rose); }
 .lock-box h3 { font-family: 'Kalam', cursive; font-size: 1.7rem; color: var(--rose-deep); margin: 8px 0 4px; }
 .lock-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 18px; }
 .lock-box input {
@@ -863,6 +914,10 @@ body.locked { overflow: hidden; }
   .container { padding: 12px; }
   .section { padding: 20px; }
   .header h1 { font-size: 2.4rem; }
+  .mascot-img { width: 64px; height: 64px; }
+  .mascots { gap: 34px; }
+  .bg-sprite.s-gengar { width: 130px; left: -20px; }
+  .bg-sprite.s-clefairy { width: 120px; right: -14px; }
   .counter-unit { min-width: 68px; padding: 12px 14px; }
   .counter-unit .number { font-size: 2rem; }
   .slide-w { margin: 0; }
@@ -885,10 +940,22 @@ body.locked { overflow: hidden; }
 <body>
 
 <div class="particles" id="particles"></div>
+<img class="bg-sprite s-gengar" src="gengar-mini.png" alt="">
+<img class="bg-sprite s-clefairy" src="clefairy-mini.png" alt="">
 
 <div class="container">
 
   <div class="header">
+    <div class="mascots">
+      <div class="mascot">
+        <img class="mascot-img gengar" src="gengar.png" alt="gengar">
+        <div class="mascot-tag">gengar</div>
+      </div>
+      <div class="mascot">
+        <img class="mascot-img clefairy" src="clefairy.png" alt="clefairy">
+        <div class="mascot-tag">clefairy</div>
+      </div>
+    </div>
     <h1 id="namesDisplay" onclick="openNamesModal()" title="click to edit names">loading...</h1>
     <div class="subtitle">since the best day of our lives</div>
   </div>
@@ -1013,7 +1080,8 @@ body.locked { overflow: hidden; }
 
   <div class="footer">
     <button class="btn btn-ghost lock-btn" onclick="lockSite()">&#128274; lock</button>
-    <div>made with <span class="heart">&hearts;</span> for us</div>
+    <div>gengar <span class="heart">&hearts;</span> clefairy</div>
+    <div style="margin-top:6px;font-size:0.85rem">made with love, for us</div>
   </div>
 
 </div>
@@ -1092,7 +1160,11 @@ body.locked { overflow: hidden; }
 
 <div class="lock-screen" id="lockScreen">
   <div class="lock-box">
-    <div class="lock-heart">&hearts;</div>
+    <div class="lock-duo">
+      <img class="g" src="gengar-mini.png" alt="">
+      <div class="lock-heart">&hearts;</div>
+      <img class="c" src="clefairy-mini.png" alt="">
+    </div>
     <h3>ours &mdash; please don&rsquo;t peek</h3>
     <p class="lock-sub">it&rsquo;s just for us two</p>
     <input type="password" id="lockInput" placeholder="our secret password" autocomplete="off" autocapitalize="off" spellcheck="false">
