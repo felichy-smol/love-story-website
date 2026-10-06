@@ -630,6 +630,110 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
 }
 .add-row input:focus { border-color: var(--rose); }
 
+.med-cal-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.med-cal-bar h4 {
+  font-family: 'Kalam', cursive;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: var(--rose-deep);
+  margin: 0;
+}
+.med-cal-nav {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--card-border);
+  background: #fff;
+  color: var(--ink);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+.med-cal-nav:hover { border-color: var(--rose); color: var(--rose-deep); }
+.med-cal-head {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.med-cal-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.med-day {
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--card-border);
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--ink);
+  transition: border-color 0.2s, transform 0.15s;
+}
+.med-day:hover { border-color: var(--rose); transform: translateY(-1px); }
+.med-day .dn { font-weight: 700; line-height: 1; }
+.med-day .ds { width: 7px; height: 7px; border-radius: 50%; }
+.med-day.all .ds { background: linear-gradient(135deg, var(--rose), var(--lav)); }
+.med-day.some .ds { background: var(--peach); }
+.med-day.none .ds { background: #e7d6e6; }
+.med-day.other { opacity: 0.4; cursor: default; }
+.med-day.other:hover { border-color: var(--card-border); transform: none; }
+.med-day.today { box-shadow: inset 0 0 0 2px var(--rose); }
+.med-cal-legend {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.lg { display: inline-flex; align-items: center; gap: 5px; }
+.lg i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: linear-gradient(135deg, var(--rose), var(--lav)); }
+.med-day-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  background: #fdf6fa;
+  border: 1px solid var(--card-border);
+  cursor: pointer;
+  margin-bottom: 8px;
+  position: relative;
+}
+.med-day-row:hover { border-color: var(--rose); }
+.med-day-row input { opacity: 0; position: absolute; pointer-events: none; }
+.med-day-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--card-border);
+  background: #fff;
+  color: #fff;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.med-day-row input:checked + .med-day-check {
+  background: linear-gradient(135deg, var(--rose), var(--lav));
+  border-color: transparent;
+}
+.med-day-name { font-family: 'Kalam', cursive; font-size: 1.1rem; color: var(--ink); }
+
 .bp-latest { text-align: center; padding: 10px 0 4px; }
 .bp-empty { font-family: 'Kalam', cursive; font-size: 1.2rem; color: var(--muted); padding: 10px; }
 .bp-big { display: flex; align-items: baseline; justify-content: center; gap: 6px; }
@@ -835,6 +939,22 @@ body.locked { overflow: hidden; }
         <input type="text" id="medNameInput" placeholder="name of a med..." maxlength="40">
         <button class="btn btn-ghost" onclick="addMed()">add med</button>
       </div>
+      <div style="height:18px"></div>
+      <div class="sub-heading">meds calendar</div>
+      <div class="med-cal-bar">
+        <button class="med-cal-nav" onclick="calMedsNav(-1)">&#8249;</button>
+        <h4 id="medsCalTitle"></h4>
+        <button class="med-cal-nav" onclick="calMedsNav(1)">&#8250;</button>
+      </div>
+      <div class="med-cal-head">
+        <div>mo</div><div>tu</div><div>we</div><div>th</div><div>fr</div><div>sa</div><div>su</div>
+      </div>
+      <div class="med-cal-days" id="medsCalDays"></div>
+      <div class="med-cal-legend">
+        <span class="lg"><i></i> taken</span>
+        <span class="lg"><i style="background:var(--peach)"></i> some</span>
+        <span class="lg"><i style="background:#e7d6e6"></i> not taken</span>
+      </div>
     </div>
     <div class="section">
       <div class="section-title">blood pressure</div>
@@ -921,6 +1041,17 @@ body.locked { overflow: hidden; }
       <div style="flex:1"></div>
       <button class="btn btn-ghost" onclick="closeNamesModal()">cancel</button>
       <button class="btn btn-primary" onclick="saveNames()">save</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="medDayModal">
+  <div class="modal">
+    <h3 id="medDayTitle"></h3>
+    <div id="medDayList"></div>
+    <div class="modal-actions">
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost" onclick="closeMedDayModal()">done</button>
     </div>
   </div>
 </div>
@@ -1351,6 +1482,7 @@ body.locked { overflow: hidden; }
       row.appendChild(del);
       list.appendChild(row);
     });
+    renderMedsCalendar();
   }
 
   function keyOfDate(d) {
@@ -1384,6 +1516,93 @@ body.locked { overflow: hidden; }
   document.getElementById('medNameInput').addEventListener('keydown', function(e) {
     if (e.key === 'Enter') { e.preventDefault(); addMed(); }
   });
+
+  /* ── Meds calendar ── */
+  var calYear = new Date().getFullYear();
+  var calMonth = new Date().getMonth();
+
+  function renderMedsCalendar() {
+    var title = document.getElementById('medsCalTitle');
+    var grid = document.getElementById('medsCalDays');
+    title.textContent = MONTHS[calMonth] + ' ' + calYear;
+    grid.innerHTML = '';
+    if (!medsCache.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;padding:14px 0">no meds yet \u2014 the calendar is waiting &hearts;</div>';
+      return;
+    }
+    var firstDay = new Date(calYear, calMonth, 1);
+    var start = firstDay.getDay() - 1;
+    if (start < 0) start = 6;
+    var daysIn = new Date(calYear, calMonth + 1, 0).getDate();
+    var prevDays = new Date(calYear, calMonth, 0).getDate();
+    for (var i = start - 1; i >= 0; i--) {
+      grid.appendChild(calDayCell(prevDays - i, false));
+    }
+    for (var d = 1; d <= daysIn; d++) {
+      var key = calYear + '-' + pad(calMonth + 1) + '-' + pad(d);
+      var taken = 0;
+      medsCache.forEach(function(m) { if (medTaken(m.id, key)) taken++; });
+      var cls = taken === 0 ? 'none' : (taken === medsCache.length ? 'all' : 'some');
+      if (key === todayKey()) cls += ' today';
+      var cell = calDayCell(d, true);
+      cell.classList.add(cls);
+      (function(k) {
+        cell.addEventListener('click', function() { openMedDayModal(k); });
+      })(key);
+      grid.appendChild(cell);
+    }
+    var pad2 = (start + daysIn) % 7;
+    if (pad2 > 0) {
+      for (var j = 1; j <= 7 - pad2; j++) grid.appendChild(calDayCell(j, false));
+    }
+  }
+
+  function calDayCell(dayNum, thisMonth) {
+    var el = document.createElement('div');
+    el.className = 'med-day' + (thisMonth ? '' : ' other');
+    el.innerHTML = '<span class="dn">' + dayNum + '</span><span class="ds"></span>';
+    return el;
+  }
+
+  window.calMedsNav = function(dir) {
+    calMonth += dir;
+    if (calMonth > 11) { calMonth = 0; calYear++; }
+    if (calMonth < 0) { calMonth = 11; calYear--; }
+    renderMedsCalendar();
+  };
+
+  window.openMedDayModal = function(key) {
+    var parts = key.split('-');
+    var d = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    document.getElementById('medDayTitle').textContent = MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+    var box = document.getElementById('medDayList');
+    box.innerHTML = '';
+    medsCache.forEach(function(m) {
+      var row = document.createElement('label');
+      row.className = 'med-day-row';
+      var name = document.createElement('span');
+      name.className = 'med-day-name';
+      name.textContent = m.name;
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = medTaken(m.id, key);
+      cb.addEventListener('change', function(e) {
+        var ref = db.ref(ROOT + '/health/medsTimeline/' + m.id + '/' + key);
+        if (e.target.checked) ref.set(true); else ref.remove();
+      });
+      var check = document.createElement('span');
+      check.className = 'med-day-check';
+      check.textContent = '\u2713';
+      row.appendChild(cb);
+      row.appendChild(check);
+      row.appendChild(name);
+      box.appendChild(row);
+    });
+    document.getElementById('medDayModal').classList.add('active');
+  };
+  window.closeMedDayModal = function() {
+    document.getElementById('medDayModal').classList.remove('active');
+  };
 
   /* ── Blood pressure ── */
   var bpCache = [];
