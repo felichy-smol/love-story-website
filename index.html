@@ -687,6 +687,7 @@ h1, h2, h3, .handwritten { font-family: 'Kalam', cursive; }
 .med-day.all .ds { background: linear-gradient(135deg, var(--rose), var(--lav)); }
 .med-day.some .ds { background: var(--peach); }
 .med-day.none .ds { background: #e7d6e6; }
+.med-day.read .ds { background: linear-gradient(135deg, var(--lav), var(--rose-deep)); }
 .med-day.other { opacity: 0.4; cursor: default; }
 .med-day.other:hover { border-color: var(--card-border); transform: none; }
 .med-day.today { box-shadow: inset 0 0 0 2px var(--rose); }
@@ -970,6 +971,21 @@ body.locked { overflow: hidden; }
       <div class="bp-chart-wrap">
         <svg id="bpChart" viewBox="0 0 600 180" preserveAspectRatio="none"></svg>
       </div>
+      <div style="height:18px"></div>
+      <div class="sub-heading">bp calendar</div>
+      <div class="med-cal-bar">
+        <button class="med-cal-nav" onclick="calBpNav(-1)">&#8249;</button>
+        <h4 id="bpCalTitle"></h4>
+        <button class="med-cal-nav" onclick="calBpNav(1)">&#8250;</button>
+      </div>
+      <div class="med-cal-head">
+        <div>mo</div><div>tu</div><div>we</div><div>th</div><div>fr</div><div>sa</div><div>su</div>
+      </div>
+      <div class="med-cal-days" id="bpCalDays"></div>
+      <div class="med-cal-legend">
+        <span class="lg"><i style="background:linear-gradient(135deg,var(--lav),var(--rose-deep))"></i> has a reading</span>
+        <span class="lg"><i style="background:#e7d6e6"></i> none</span>
+      </div>
       <div class="bp-list" id="bpList"></div>
     </div>
   </div>
@@ -1052,6 +1068,17 @@ body.locked { overflow: hidden; }
     <div class="modal-actions">
       <div style="flex:1"></div>
       <button class="btn btn-ghost" onclick="closeMedDayModal()">done</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="bpDayModal">
+  <div class="modal">
+    <h3 id="bpDayTitle"></h3>
+    <div id="bpDayList"></div>
+    <div class="modal-actions">
+      <div style="flex:1"></div>
+      <button class="btn btn-ghost" onclick="closeBpDayModal()">done</button>
     </div>
   </div>
 </div>
@@ -1662,6 +1689,7 @@ body.locked { overflow: hidden; }
     }
     renderBpChart();
     renderBpList();
+    renderBpCalendar();
   }
 
   function renderBpList() {
@@ -1713,6 +1741,99 @@ body.locked { overflow: hidden; }
       '<text x="6" y="' + (padY + 12) + '" font-size="13" fill="#c0a9cd">' + Math.round(max) + '</text>' +
       '<text x="6" y="' + (H - padY + 4) + '" font-size="13" fill="#c0a9cd">' + Math.round(min) + '</text>';
   }
+
+  var bpCalYear = new Date().getFullYear();
+  var bpCalMonth = new Date().getMonth();
+
+  function bpReadingsByDay() {
+    var map = {};
+    bpCache.forEach(function(r) {
+      var d = new Date(r.date);
+      var k = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+      (map[k] = map[k] || []).push(r);
+    });
+    return map;
+  }
+
+  function renderBpCalendar() {
+    var title = document.getElementById('bpCalTitle');
+    var grid = document.getElementById('bpCalDays');
+    title.textContent = MONTHS[bpCalMonth] + ' ' + bpCalYear;
+    grid.innerHTML = '';
+    if (!bpCache.length) {
+      grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;padding:14px 0">no readings yet \u2014 the calendar is waiting &hearts;</div>';
+      return;
+    }
+    var byDay = bpReadingsByDay();
+    var firstDay = new Date(bpCalYear, bpCalMonth, 1);
+    var start = firstDay.getDay() - 1;
+    if (start < 0) start = 6;
+    var daysIn = new Date(bpCalYear, bpCalMonth + 1, 0).getDate();
+    var prevDays = new Date(bpCalYear, bpCalMonth, 0).getDate();
+    for (var i = start - 1; i >= 0; i--) {
+      grid.appendChild(calDayCell(prevDays - i, false));
+    }
+    for (var d = 1; d <= daysIn; d++) {
+      var key = bpCalYear + '-' + pad(bpCalMonth + 1) + '-' + pad(d);
+      var cell = calDayCell(d, true);
+      if (byDay[key]) cell.classList.add('read');
+      if (key === todayKey()) cell.classList.add('today');
+      (function(k) {
+        cell.addEventListener('click', function() { openBpDayModal(k); });
+      })(key);
+      grid.appendChild(cell);
+    }
+    var pad2 = (start + daysIn) % 7;
+    if (pad2 > 0) {
+      for (var j = 1; j <= 7 - pad2; j++) grid.appendChild(calDayCell(j, false));
+    }
+  }
+
+  window.calBpNav = function(dir) {
+    bpCalMonth += dir;
+    if (bpCalMonth > 11) { bpCalMonth = 0; bpCalYear++; }
+    if (bpCalMonth < 0) { bpCalMonth = 11; bpCalYear--; }
+    renderBpCalendar();
+  };
+
+  window.openBpDayModal = function(key) {
+    var parts = key.split('-');
+    var d = new Date(+parts[0], +parts[1] - 1, +parts[2]);
+    document.getElementById('bpDayTitle').textContent = MONTHS[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+    var box = document.getElementById('bpDayList');
+    box.innerHTML = '';
+    var readings = (bpReadingsByDay()[key] || []).slice().sort(function(a, b) {
+      return new Date(a.date) - new Date(b.date);
+    });
+    if (!readings.length) {
+      box.innerHTML = '<div class="empty-state">no readings this day</div>';
+    }
+    readings.forEach(function(r) {
+      var row = document.createElement('div');
+      row.className = 'bp-row';
+      var time = document.createElement('div');
+      time.className = 'bp-time';
+      var rd = new Date(r.date);
+      time.textContent = pad(rd.getHours()) + ':' + pad(rd.getMinutes());
+      var val = document.createElement('div');
+      val.className = 'bp-val';
+      val.textContent = r.sys + '/' + r.dia + (r.pulse ? ' \u00B7 pulse ' + r.pulse : '');
+      var del = document.createElement('button');
+      del.className = 'bp-del';
+      del.textContent = '\u00D7';
+      del.addEventListener('click', function() {
+        if (confirm('delete this reading?')) db.ref(ROOT + '/health/bp/' + r.id).remove();
+      });
+      row.appendChild(time);
+      row.appendChild(val);
+      row.appendChild(del);
+      box.appendChild(row);
+    });
+    document.getElementById('bpDayModal').classList.add('active');
+  };
+  window.closeBpDayModal = function() {
+    document.getElementById('bpDayModal').classList.remove('active');
+  };
 
   renderTimeline();
     });
