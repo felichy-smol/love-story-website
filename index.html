@@ -582,6 +582,16 @@ h1, h2, h3, .handwritten { font-family: 'Baloo 2', sans-serif; }
   font-size: 1.1rem;
 }
 .footer .heart { color: var(--rose); animation: heartbeat 1.2s infinite; display: inline-block; }
+.footer .farm-link {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 0.95rem;
+  color: var(--lav);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--lav);
+  transition: color .25s, border-color .25s;
+}
+.footer .farm-link:hover { color: var(--rose); border-bottom-color: var(--rose); }
 @keyframes heartbeat {
   0%, 100% { transform: scale(1); }
   15% { transform: scale(1.25); }
@@ -1079,6 +1089,7 @@ body.locked { overflow: hidden; }
     <button class="btn btn-ghost lock-btn" onclick="lockSite()">&#128274; lock</button>
     <div>gengar <span class="heart">&hearts;</span> clefairy</div>
     <div style="margin-top:6px;font-size:0.85rem">made with love, for us</div>
+    <a class="farm-link" href="farm/">&#8594; visit our little farm</a>
   </div>
 
 </div>

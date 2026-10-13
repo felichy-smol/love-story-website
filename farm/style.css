@@ -1,0 +1,358 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+
+:root {
+  --ink: #3c3227;
+  --cream: #f3e8cf;
+  --cream-dark: #e0cfa6;
+  --wood: #9c6b43;
+  --wood-dark: #734d31;
+  --grass: #7ba05b;
+  --pink: #d98ca5;
+  --gold: #e6b84a;
+  --panel-bg: #2c2620;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: #1b1712;
+  font-family: 'VT323', monospace;
+  color: var(--ink);
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+}
+
+#stage {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(120% 120% at 50% 0%, #2a2620 0%, #161310 100%);
+}
+
+#game {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  box-shadow: 0 0 0 4px #2c2620, 0 18px 50px rgba(0,0,0,0.55);
+  background: #bcdcea;
+}
+
+/* ---------------- HUD ---------------- */
+.hud {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 12px;
+  pointer-events: none;
+  font-family: 'Press Start 2P', monospace;
+  z-index: 20;
+}
+.hud-left, .hud-right { display: flex; gap: 8px; align-items: center; }
+.chip {
+  background: rgba(44,38,32,0.86);
+  color: var(--cream);
+  border: 2px solid var(--wood-dark);
+  border-radius: 4px;
+  padding: 6px 9px 4px;
+  font-size: 9px;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.chip .ic { width: 12px; height: 12px; display: inline-block; }
+.chip.gold { color: #ffdf8e; }
+.hud button.chip {
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.08s, background 0.1s;
+}
+.hud button.chip:hover { background: rgba(60,52,42,0.95); }
+.hud button.chip:active { transform: translateY(1px); }
+.hud button.chip:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+
+/* ---------------- hint ---------------- */
+.hint {
+  position: absolute;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  background: rgba(44,38,32,0.9);
+  color: var(--cream);
+  border: 2px solid var(--wood-dark);
+  border-radius: 4px;
+  padding: 6px 12px 4px;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  z-index: 15;
+  opacity: 0;
+  transition: opacity 0.15s;
+  pointer-events: none;
+  text-align: center;
+  max-width: 90%;
+}
+.hint.show { opacity: 1; }
+.hint .key {
+  display: inline-block;
+  background: var(--cream);
+  color: var(--ink);
+  border-radius: 3px;
+  padding: 0 5px 1px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  margin: 0 2px;
+}
+
+/* ---------------- inventory bar ---------------- */
+.inventory {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 18;
+}
+.slot {
+  width: 52px;
+  height: 52px;
+  background: rgba(44,38,32,0.86);
+  border: 2px solid var(--wood-dark);
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.1s, transform 0.08s;
+}
+.slot canvas { width: 34px; height: 34px; image-rendering: pixelated; }
+.slot .count {
+  position: absolute;
+  right: 3px; bottom: 1px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--cream);
+  text-shadow: 0 1px 0 #000;
+}
+.slot .num {
+  position: absolute;
+  left: 3px; top: 1px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #b7a98c;
+}
+.slot.active { border-color: var(--gold); transform: translateY(-3px); }
+.slot:hover { border-color: var(--pink); }
+.slot:focus-visible { outline: 2px solid var(--pink); outline-offset: 2px; }
+
+/* ---------------- dialogue ---------------- */
+.dialogue {
+  position: absolute;
+  left: 50%;
+  bottom: 76px;
+  transform: translateX(-50%) translateY(8px);
+  width: min(680px, 92%);
+  background: var(--cream);
+  border: 3px solid var(--wood-dark);
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 2px var(--cream-dark), 0 10px 26px rgba(0,0,0,0.4);
+  padding: 16px 20px 20px;
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.dialogue.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+.dialogue .who {
+  position: absolute;
+  top: -14px; left: 16px;
+  background: var(--wood);
+  color: var(--cream);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  padding: 5px 8px 3px;
+  border-radius: 4px;
+  border: 2px solid var(--wood-dark);
+}
+.dialogue .txt {
+  font-size: 21px;
+  line-height: 1.25;
+  color: var(--ink);
+  min-height: 52px;
+}
+.dialogue .txt .cursor { animation: blink 0.8s steps(1) infinite; color: var(--wood); }
+@keyframes blink { 50% { opacity: 0; } }
+.dialogue .cont {
+  position: absolute;
+  right: 14px; bottom: 8px;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 9px;
+  color: var(--wood);
+  animation: bob 0.8s ease-in-out infinite;
+}
+@keyframes bob { 50% { transform: translateY(2px); } }
+.dialogue .cont.hidden { display: none; }
+
+/* ---------------- overlay panels (menu / shop / title / ending) ---------------- */
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20,16,12,0.66);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  padding: 20px;
+}
+.overlay.show { opacity: 1; pointer-events: auto; }
+.panel {
+  background: var(--cream);
+  border: 3px solid var(--wood-dark);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 3px var(--cream-dark), 0 16px 40px rgba(0,0,0,0.5);
+  padding: 26px 28px;
+  width: min(520px, 94%);
+  text-align: center;
+}
+.panel h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 15px;
+  color: var(--wood-dark);
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+.panel p { font-size: 20px; color: #5a4c39; margin-bottom: 18px; line-height: 1.25; }
+.btn {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  background: var(--grass);
+  color: #21301a;
+  border: none;
+  border-bottom: 4px solid #4f6f37;
+  border-radius: 5px;
+  padding: 12px 18px;
+  margin: 5px;
+  cursor: pointer;
+  transition: transform 0.08s, filter 0.1s;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+.btn:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.btn.alt { background: var(--cream-dark); color: var(--ink); border-bottom-color: #b9a276; }
+.btn.warn { background: #cf7f7f; color: #3a1717; border-bottom-color: #9d5555; }
+.btn:disabled { opacity: 0.5; cursor: default; filter: grayscale(0.4); }
+.btn.block { display: block; width: 100%; margin: 6px 0; }
+
+/* shop rows */
+.shop-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #efe3c6;
+  border: 2px solid var(--cream-dark);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+}
+.shop-row .seed { display: flex; align-items: center; gap: 10px; font-size: 20px; }
+.shop-row canvas { width: 32px; height: 32px; image-rendering: pixelated; }
+.shop-row .price { font-family: 'Press Start 2P', monospace; font-size: 10px; color: var(--wood-dark); }
+.shop-row .buy { margin: 0; padding: 8px 12px; font-size: 9px; }
+
+/* title screen */
+#title .panel { background: transparent; border: none; box-shadow: none; }
+.title-art {
+  width: 100%;
+  image-rendering: pixelated;
+  border: 3px solid var(--wood-dark);
+  border-radius: 6px;
+  box-shadow: inset 0 0 0 3px var(--cream-dark), 0 16px 40px rgba(0,0,0,0.5);
+  margin-bottom: 16px;
+}
+.title-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 22px;
+  color: var(--cream);
+  text-shadow: 3px 3px 0 #734d31, 0 0 18px rgba(0,0,0,0.5);
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.title-sub {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--cream-dark);
+  margin-bottom: 16px;
+}
+.hint-keys { font-size: 16px; color: #b7a98c; margin-top: 12px; line-height: 1.4; }
+
+/* ending */
+.ending-flowers { font-size: 26px; letter-spacing: 6px; margin-bottom: 10px; }
+
+/* touch controls */
+.touch {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+  display: none;
+}
+.touch.on { display: block; }
+.dpad {
+  position: absolute;
+  left: 18px; bottom: 76px;
+  width: 150px; height: 150px;
+  pointer-events: auto;
+}
+.dbtn {
+  position: absolute;
+  width: 50px; height: 50px;
+  background: rgba(44,38,32,0.7);
+  border: 2px solid rgba(243,232,207,0.5);
+  border-radius: 8px;
+  color: var(--cream);
+  font-family: 'Press Start 2P', monospace;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+}
+.dbtn.up { left: 50px; top: 0; }
+.dbtn.down { left: 50px; top: 100px; }
+.dbtn.left { left: 0; top: 50px; }
+.dbtn.right { left: 100px; top: 50px; }
+.dbtn:active { background: rgba(243,232,207,0.75); color: var(--ink); }
+.act-btn {
+  position: absolute;
+  right: 22px; bottom: 96px;
+  width: 74px; height: 74px;
+  border-radius: 50%;
+  background: rgba(216,140,165,0.85);
+  border: 3px solid rgba(243,232,207,0.6);
+  color: #3a1720;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  pointer-events: auto;
+  display: flex; align-items: center; justify-content: center;
+}
+.act-btn:active { filter: brightness(1.15); }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}

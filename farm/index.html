@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Our Little Farm</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="game" width="320" height="180" aria-label="Our Little Farm game world"></canvas>
+
+  <!-- HUD -->
+  <div class="hud" id="hud" style="display:none">
+    <div class="hud-left">
+      <div class="chip" id="dayChip"><span class="ic">☀</span><span id="dayLabel">Day 1</span></div>
+      <div class="chip gold"><span class="ic">◆</span><span id="coinLabel">0</span></div>
+      <div class="chip" id="keepChip"><span class="ic">✦</span><span id="keepLabel">0 / 7 keepsakes</span></div>
+    </div>
+    <div class="hud-right">
+      <button class="chip" id="soundBtn" aria-label="Toggle sound">♪ on</button>
+      <button class="chip" id="menuBtn" aria-label="Open menu">menu</button>
+    </div>
+  </div>
+
+  <!-- interaction hint -->
+  <div class="hint" id="hint"></div>
+
+  <!-- inventory -->
+  <div class="inventory" id="inventory" style="display:none" role="toolbar" aria-label="Seed inventory"></div>
+
+  <!-- dialogue -->
+  <div class="dialogue" id="dialogue" role="dialog" aria-live="polite">
+    <div class="who" id="dlgWho">Farmer</div>
+    <div class="txt" id="dlgText"></div>
+    <div class="cont" id="dlgCont">press E ▸</div>
+  </div>
+
+  <!-- title screen -->
+  <div class="overlay show" id="title">
+    <div class="panel">
+      <canvas class="title-art" id="titleArt" width="320" height="150"></canvas>
+      <div class="title-name" id="titleName">Our Little Farm</div>
+      <div class="title-sub" id="titleSub">a little world we grow together</div>
+      <button class="btn" id="startBtn">▶ start</button>
+      <button class="btn alt" id="continueBtn" style="display:none">continue</button>
+      <div class="hint-keys">WASD / arrows to move · E to interact · 1·2·3 seeds · Esc menu</div>
+    </div>
+  </div>
+
+  <!-- pause menu -->
+  <div class="overlay" id="menu">
+    <div class="panel">
+      <h2>paused</h2>
+      <p>take your time.</p>
+      <button class="btn block" id="resumeBtn">▶ resume</button>
+      <button class="btn alt block" id="menuSoundBtn">♪ sound: on</button>
+      <button class="btn alt block" id="controlsBtn">⌨ controls &amp; how to play</button>
+      <button class="btn warn block" id="restartBtn">↺ restart farm</button>
+    </div>
+  </div>
+
+  <!-- controls / help -->
+  <div class="overlay" id="controls">
+    <div class="panel">
+      <h2>how to play</h2>
+      <p id="controlsText"></p>
+      <button class="btn block" id="controlsBack">back</button>
+    </div>
+  </div>
+
+  <!-- seed shop -->
+  <div class="overlay" id="shop">
+    <div class="panel">
+      <h2>seed box</h2>
+      <p>trade a few coins for seeds.</p>
+      <div id="shopList"></div>
+      <button class="btn alt block" id="shopClose">close</button>
+    </div>
+  </div>
+
+  <!-- ending -->
+  <div class="overlay" id="ending">
+    <div class="panel">
+      <div class="ending-flowers">❀ ❀ ❀</div>
+      <h2 id="endTitle">Happy 2 Months</h2>
+      <p id="endSub">and many, many more</p>
+      <button class="btn block" id="keepPlaying">keep tending the farm</button>
+      <button class="btn alt block" id="endRestart">start over</button>
+    </div>
+  </div>
+
+  <!-- touch controls -->
+  <div class="touch" id="touch">
+    <div class="dpad">
+      <button class="dbtn up" data-dir="up" aria-label="Move up">▲</button>
+      <button class="dbtn left" data-dir="left" aria-label="Move left">◀</button>
+      <button class="dbtn right" data-dir="right" aria-label="Move right">▶</button>
+      <button class="dbtn down" data-dir="down" aria-label="Move down">▼</button>
+    </div>
+    <button class="act-btn" id="actBtn" aria-label="Interact">E</button>
+  </div>
+</div>
+
+<script src="gameConfig.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
