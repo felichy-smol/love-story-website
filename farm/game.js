@@ -32,7 +32,7 @@
   /* ---------------- world layout ---------------- */
   var HOUSE = { x: 5, y: 3, w: 6, h: 5 };     // tiles
   var POND = { cx: 7.5, cy: 19, rx: 5, ry: 3.2 };
-  var DOOR_TILE = { x: 7, y: 8 };
+  var DOOR_TILE = { x: 8, y: 7 };
   var GATE = { x: 30, y: 6 };
   var SECRET = { x0: 31, y0: 4, x1: 36, y1: 8 };
   var FINAL_TILE = { x: 34, y: 7 };
@@ -59,7 +59,10 @@
   }
   function isSecretBorder(tx, ty) {
     if (tx === GATE.x && ty === GATE.y) return false;
-    return tx === SECRET.x0 - 1 || tx === SECRET.x1 + 1 || ty === SECRET.y0 - 1 || ty === SECRET.y1 + 1;
+    var l = SECRET.x0 - 1, r = SECRET.x1 + 1, t = SECRET.y0 - 1, b = SECRET.y1 + 1;
+    if (tx >= l && tx <= r && (ty === t || ty === b)) return true;
+    if (ty >= t && ty <= b && (tx === l || tx === r)) return true;
+    return false;
   }
   function isSecretInterior(tx, ty) {
     return tx >= SECRET.x0 && tx <= SECRET.x1 && ty >= SECRET.y0 && ty <= SECRET.y1;
@@ -165,7 +168,7 @@
       ending: false,
       seenIntro: false,
       muted: false,
-      player: { x: 8 * TILE + 8, y: 12 * TILE, dir: 'down', step: 0, moving: false },
+      player: { x: 8 * TILE + 8, y: 12 * TILE + 8, dir: 'down', step: 0, moving: false },
       playTime: 0
     };
     collectibles.forEach(function (c) { s.collected[c.id] = false; });
@@ -493,10 +496,10 @@
     var dx = 0, dy = 0, d = state.player.dir;
     if (d === 'up') dy = -1; else if (d === 'down') dy = 1; else if (d === 'left') dx = -1; else dx = 1;
     var tx = Math.floor(state.player.x / TILE) + dx;
-    var ty = Math.floor((state.player.y - 4) / TILE) + dy;
+    var ty = Math.floor(state.player.y / TILE) + dy;
     return { x: tx, y: ty };
   }
-  function hereTile() { return { x: Math.floor(state.player.x / TILE), y: Math.floor((state.player.y - 4) / TILE) }; }
+  function hereTile() { return { x: Math.floor(state.player.x / TILE), y: Math.floor(state.player.y / TILE) }; }
 
   function objAt(tx, ty) {
     for (var i = 0; i < objects.length; i++) {
@@ -636,15 +639,20 @@
 
   function drawTree(x, y) {
     var bx = x * TILE, by = y * TILE;
-    R(bx + 6, by + 14, 4, 8, P.woodDark);
-    R(bx + 6, by + 14, 2, 8, P.wood);
-    var sway = Math.sin(perfNow * 0.001 + x) * 0.6;
-    R(bx + 1, by + 4 + sway, 14, 10, P.grassDark);
-    R(bx + 2, by + 2 + sway, 12, 10, P.grass);
-    R(bx + 4, by - 1 + sway, 8, 8, P.grassLite);
-    R(bx + 5, by + sway, 6, 4, P.sage);
-    R(bx + 3, by + 6 + sway, 2, 2, P.grassLite);
-    R(bx + 11, by + 7 + sway, 2, 2, P.grassDark);
+    var sway = Math.round(Math.sin(perfNow * 0.001 + x) * 0.7);
+    // trunk + roots
+    R(bx + 6, by + 9, 4, 11, P.woodDark);
+    R(bx + 6, by + 9, 2, 11, P.wood);
+    R(bx + 4, by + 18, 8, 2, P.woodDark);
+    // layered canopy
+    R(bx + 1, by + 5 + sway, 14, 11, P.grassDark);
+    R(bx + 2, by + 2 + sway, 12, 12, P.grass);
+    R(bx + 4, by + 1 + sway, 8, 8, P.grassLite);
+    R(bx + 5, by + 1 + sway, 5, 5, P.sage);
+    R(bx + 2, by + 6 + sway, 2, 2, P.grassLite);
+    R(bx + 11, by + 8 + sway, 2, 2, P.grassDark);
+    // blossom dots on some trees
+    if (hash(x, y) > 0.55) { R(bx + 4, by + 5 + sway, 2, 2, P.pinkSoft); R(bx + 9, by + 9 + sway, 2, 2, P.pinkSoft); }
   }
   function drawRock(x, y) {
     var bx = x * TILE, by = y * TILE;
@@ -773,10 +781,17 @@
     }
     window_(x + 12, y + 42);
     window_(x + w - 26, y + 42);
-    // door
-    R(x + w / 2 - 8, y + 50, 16, 30, P.woodDark);
-    R(x + w / 2 - 6, y + 52, 12, 28, P.wood);
-    R(x + w / 2 + 2, y + 64, 2, 2, P.gold);
+    // door (centred on DOOR_TILE so it lines up with the path)
+    var dcx = DOOR_TILE.x * TILE + 8;
+    var dtop = DOOR_TILE.y * TILE - 16;
+    R(dcx - 9, dtop - 1, 18, 31, P.woodDark);
+    R(dcx - 7, dtop + 1, 14, 28, P.wood);
+    R(dcx - 7, dtop + 1, 14, 2, '#a97a4e');
+    R(dcx - 1, dtop + 12, 1, 16, P.woodDark);
+    R(dcx + 3, dtop + 15, 2, 2, P.gold);
+    // small stone doorstep
+    R(dcx - 8, dtop + 29, 16, 3, P.stoneDark);
+    R(dcx - 8, dtop + 29, 16, 1, P.stone);
   }
 
   function drawCrop(x, y, p) {
@@ -830,35 +845,46 @@
     var p = state.player;
     var x = p.x, y = p.y, d = p.dir;
     var frame = p.moving ? (Math.floor(p.step) % 2) : 0;
+    var skin = '#f6d2ac', hair = '#7a4a2b', hairD = '#5d3519', dress = P.pink, dressD = '#a9586f';
     R(x - 6, y - 2, 12, 3, P.shadow);
     var bob = (p.moving && frame) ? -1 : 0;
     y += bob;
-    // legs
     var lo = (p.moving && frame) ? 1 : 0;
-    R(x - 4, y - 6 + lo, 3, 6 - lo, '#5b7fb5');
-    R(x + 1, y - 6, 3, 6, '#5b7fb5');
-    R(x - 4, y - 1, 3, 2, '#5a3a25');
-    R(x + 1, y - 1, 3, 2, '#5a3a25');
-    // body
-    R(x - 5, y - 12, 10, 7, '#5b7fb5');
-    R(x - 5, y - 12, 10, 2, '#4a6a99');
-    R(x - 2, y - 12, 4, 3, '#e8b98f');
+    // boots + legs
+    R(x - 4, y - 2 + lo, 3, 3, '#5a3a25');
+    R(x + 1, y - 2, 3, 3, '#5a3a25');
+    R(x - 4, y - 5 + lo, 3, 4 - lo, skin);
+    R(x + 1, y - 5, 3, 4, skin);
+    // flared dress
+    R(x - 6, y - 12, 12, 7, dress);
+    R(x - 7, y - 6, 14, 3, dress);
+    R(x - 7, y - 3, 14, 1, dressD);
+    R(x - 6, y - 12, 12, 2, dressD);
+    // cream apron
+    R(x - 3, y - 10, 6, 6, P.cream);
+    R(x - 3, y - 10, 6, 1, P.creamDark);
     // arms
-    R(x - 6, y - 11, 2, 5, '#e8b98f');
-    R(x + 4, y - 11, 2, 5, '#e8b98f');
+    R(x - 7, y - 11, 2, 5, skin);
+    R(x + 5, y - 11, 2, 5, skin);
     // head
-    R(x - 4, y - 18, 8, 7, '#f0c9a0');
-    // hair by direction
-    R(x - 4, y - 19, 8, 3, '#6b4a2f');
-    if (d === 'up') R(x - 4, y - 17, 8, 4, '#6b4a2f');
-    // straw hat
-    R(x - 6, y - 20, 12, 2, P.gold);
-    R(x - 4, y - 23, 8, 3, P.gold);
-    R(x - 4, y - 23, 8, 1, '#f3d27a');
-    // face
-    if (d === 'down') { R(x - 2, y - 16, 1, 1, P.ink); R(x + 1, y - 16, 1, 1, P.ink); R(x - 1, y - 14, 2, 1, '#c98a6a'); }
-    else if (d === 'left') { R(x - 3, y - 16, 1, 1, P.ink); R(x - 4, y - 15, 1, 1, '#c98a6a'); }
-    else if (d === 'right') { R(x + 2, y - 16, 1, 1, P.ink); R(x + 3, y - 15, 1, 1, '#c98a6a'); }
+    R(x - 4, y - 19, 8, 7, skin);
+    // long hair
+    R(x - 5, y - 20, 10, 4, hair);
+    R(x - 5, y - 20, 10, 1, hairD);
+    R(x - 5, y - 16, 2, 9, hair);
+    R(x + 3, y - 16, 2, 9, hair);
+    if (d === 'up') { R(x - 5, y - 20, 10, 9, hair); R(x - 5, y - 20, 10, 1, hairD); }
+    else {
+      R(x - 4, y - 16, 8, 1, hair); // fringe
+      if (d === 'down') {
+        R(x - 2, y - 15, 1, 1, P.ink); R(x + 1, y - 15, 1, 1, P.ink);
+        R(x - 3, y - 14, 1, 1, P.pinkSoft); R(x + 2, y - 14, 1, 1, P.pinkSoft);
+      } else if (d === 'left') { R(x - 3, y - 15, 1, 1, P.ink); }
+      else if (d === 'right') { R(x + 2, y - 15, 1, 1, P.ink); }
+    }
+    // little flower tucked in her hair
+    R(x + 4, y - 19, 2, 2, P.gold);
+    R(x + 3, y - 20, 1, 1, P.pinkSoft); R(x + 6, y - 20, 1, 1, P.pinkSoft);
   }
 
   /* ---------------- ground ---------------- */
@@ -870,24 +896,36 @@
         var bx = tx * TILE, by = ty * TILE;
         if (inPond(tx, ty)) {
           R(bx, by, TILE, TILE, P.water);
+          R(bx, by, TILE, TILE, 'rgba(63,136,166,0.20)');
           var sh = Math.sin(perfNow * 0.002 + tx * 0.7 + ty * 0.5);
-          if (sh > 0.3) R(bx + 2, by + 5 + (tx % 2), 12, 1, P.waterLite);
-          if (sh < -0.3) R(bx + 3, by + 11, 10, 1, P.waterLite);
-          R(bx, by, TILE, TILE, 'rgba(90,145,168,0.18)');
+          if (sh > 0.15) { R(bx + 2, by + 4, 10, 1, P.waterLite); R(bx + 5, by + 5, 5, 1, P.waterLite); }
+          if (sh < -0.15) R(bx + 3, by + 11, 9, 1, P.waterLite);
+          if (!inPond(tx, ty - 1)) { R(bx, by, 16, 3, P.sand); R(bx, by + 3, 16, 1, '#ccb884'); }
+          if (!inPond(tx, ty + 1)) { R(bx, by + 13, 16, 3, P.sand); R(bx, by + 12, 16, 1, '#ccb884'); }
+          if (!inPond(tx - 1, ty)) { R(bx, by, 3, 16, P.sand); R(bx + 3, by, 1, 16, '#ccb884'); }
+          if (!inPond(tx + 1, ty)) { R(bx + 13, by, 3, 16, P.sand); R(bx + 12, by, 1, 16, '#ccb884'); }
         } else if (isPath(tx, ty)) {
           R(bx, by, TILE, TILE, P.creamDark);
-          R(bx, by, TILE, 2, '#d3bf94');
-          if (hash(tx, ty) > 0.7) R(bx + 3 + (tx % 3), by + 6, 3, 2, '#cdb886');
+          R(bx, by, TILE, TILE, 'rgba(176,132,86,0.12)');
+          if (hash(tx, ty) > 0.6) R(bx + 3 + (tx % 3), by + 6, 3, 2, '#cdb886');
+          if (hash(tx + 5, ty) > 0.8) R(bx + 9, by + 3, 2, 2, '#d8c79c');
+          if (hash(tx, ty + 9) > 0.85) R(bx + 5, by + 11, 2, 1, '#c3ac79');
         } else {
           var h = hash(tx, ty);
-          var g = h > 0.5 ? P.grass : P.grassDark;
-          R(bx, by, TILE, TILE, g);
-          if (h > 0.82) R(bx + 3, by + 4, 2, 3, P.grassLite);
-          if (h > 0.93) R(bx + 9, by + 9, 2, 2, P.sage);
-          if (h > 0.965) R(bx + 4, by + 10, 3, 1, P.grassLite);
-          if (isSecretInterior(tx, ty)) {
-            if (hash(tx + 7, ty + 3) > 0.6) R(bx + 6, by + 10, 2, 3, P.grassDark);
+          R(bx, by, TILE, TILE, h > 0.5 ? P.grass : P.grassDark);
+          if (h > 0.42) R(bx + 1, by + 1, 14, 14, P.grass);
+          var b1 = hash(tx + 21, ty + 13);
+          if (b1 > 0.55) { R(bx + 3, by + 6, 1, 3, P.grassLite); R(bx + 4, by + 7, 1, 2, P.grassLite); }
+          if (b1 > 0.8) R(bx + 10, by + 9, 1, 3, P.grassLite);
+          if (b1 < 0.12) R(bx + 8, by + 4, 1, 2, P.grassDark);
+          var fl = hash(tx + 7, ty + 2);
+          if (fl > 0.94) {
+            var fc = hash(tx + 3, ty + 5) > 0.5 ? P.pink : P.gold;
+            R(bx + 6, by + 8, 1, 3, P.grassDark); R(bx + 5, by + 6, 3, 2, fc);
+          } else if (fl < 0.05) {
+            R(bx + 11, by + 5, 2, 2, P.stone); R(bx + 10, by + 7, 3, 1, P.stoneDark);
           }
+          if (isSecretInterior(tx, ty) && hash(tx + 7, ty + 3) > 0.55) R(bx + 6, by + 10, 2, 3, P.grassDark);
         }
       }
     }
@@ -1191,7 +1229,9 @@
       get state() { return state; },
       get collectibles() { return collectibles; }, get objects() { return objects; }, get plotMap() { return plotMap; },
       front: frontTile, here: hereTile, objAt: objAt,
-      place: function (tx, ty, dir) { state.player.x = tx * TILE + 8; state.player.y = ty * TILE + 4; state.player.dir = dir || 'down'; },
+      tileSolid: tileSolid, canStand: canStand,
+      _cls: function (tx, ty) { return { pond: inPond(tx, ty), house: inHouse(tx, ty), border: isSecretBorder(tx, ty), path: isPath(tx, ty) }; },
+      place: function (tx, ty, dir) { state.player.x = tx * TILE + 8; state.player.y = ty * TILE + 8; state.player.dir = dir || 'down'; },
       doAction: doAction, interact: interact, tendPlot: tendPlot, harvest: harvest,
       sleep: sleep, pickCollectible: pickCollectible, openGate: openGate, doEnding: doEnding,
       openShop: openShop, save: save

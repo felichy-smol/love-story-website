@@ -12,20 +12,20 @@ window.GAME_CONFIG = {
   title: "Our Little Farm",
   subtitle: "a little world we grow together",
   farmName: "Moonberry Farm",
-  playerName: "Farmer",
-  recipientName: "[HER NICKNAME]",
-  fromName: "[YOUR NAME]",
+  playerName: "Tony",
+  recipientName: "my love",
+  fromName: "Tony",
   milestone: "2 months together",
 
   /* ---- the letter shown when you start ---- */
   openingLetter: {
     title: "A letter arrived...",
     lines: [
-      "Hey [HER NICKNAME],",
+      "Hey my love,",
       "I couldn't be there in person, so I made you a little farm instead.",
       "It's a bit overgrown - I think it just needs some gentle care.",
       "Water the crops, sleep, and watch them grow. A little like us.",
-      "x [YOUR NAME]"
+      "x Tony"
     ]
   },
 
@@ -40,13 +40,13 @@ window.GAME_CONFIG = {
      id must stay the same (flower, heart, shell, photo,
      ribbon, key, locket). Only edit name + text. */
   collectibles: {
-    flower: { name: "Pressed Flower", text: "[A MESSAGE ABOUT A FLOWER, A DATE, SPRING...]" },
-    heart:  { name: "Paper Heart",    text: "[A SWEET IN-JOKE OR A COMPLIMENT YOU LOVE]" },
-    shell:  { name: "Seashell",       text: "[A MEMORY ABOUT THE SEA OR A TRIP YOU TOOK]" },
-    photo:  { name: "Little Photo",   text: "[A MEMORY SHE WILL RECOGNISE INSTANTLY]" },
-    ribbon: { name: "Lost Ribbon",    text: "[A FUNNY OR TENDER LITTLE MOMENT]" },
-    key:    { name: "Mysterious Key", text: "[SOMETHING ABOUT TRUST, OR OPENING UP]" },
-    locket: { name: "Keepsake",       text: "[ONE THING YOU LOVE ABOUT HER]" }
+    flower: { name: "Pressed Flower", text: "u r the prettiest girl i know" },
+    heart:  { name: "Paper Heart",    text: "i cant believe u will rewarm ur coffee in microwave again" },
+    shell:  { name: "Seashell",       text: "i got pb just to eat it with u" },
+    photo:  { name: "Little Photo",   text: "i promise to watch hundreds of sunsets with u" },
+    ribbon: { name: "Lost Ribbon",    text: "i hope u r having fun" },
+    key:    { name: "Mysterious Key", text: "u have the cutest smile" },
+    locket: { name: "Keepsake",       text: "camera where" }
   },
 
   /* ---- the hidden garden unlocks once all 7 keepsakes are found ---- */
@@ -55,13 +55,13 @@ window.GAME_CONFIG = {
 
   /* ---- the final anniversary letter ---- */
   finalLetter: {
-    title: "For you, [HER NICKNAME]",
+    title: "For you, my love",
     lines: [
-      "[WRITE YOUR PERSONAL ANNIVERSARY LETTER HERE]",
+      "Two months of you, and I still can't believe you're mine.",
       "Every little thing we care for grows - even a tiny pixel farm.",
-      "Thank you for two months of showing up for us.",
+      "Thank you for showing up for us, again and again.",
       "Here's to growing a whole lot more together.",
-      "x [YOUR NAME]"
+      "x Tony"
     ]
   },
   finalSceneTitle: "Happy 2 Months",
@@ -78,31 +78,32 @@ window.GAME_CONFIG = {
 
   /* ---- cozy muted palette (change if you like) ---- */
   palette: {
-    grass:     "#7ba05b",
-    grassDark: "#648a48",
-    grassLite: "#94b774",
-    sage:      "#a7c08a",
-    cream:     "#f3e8cf",
-    creamDark: "#e0cfa6",
-    wood:      "#9c6b43",
-    woodDark:  "#734d31",
-    roof:      "#b06e4d",
-    roofDark:  "#8a5339",
-    soil:      "#6b4a34",
-    soilDark:  "#523726",
-    soilWet:   "#4a3323",
-    water:     "#79b0c6",
-    waterDark: "#5a91a8",
-    waterLite: "#a9d0de",
-    sky:       "#bcdcea",
-    gold:      "#e6b84a",
-    pink:      "#d98ca5",
-    pinkSoft:  "#ecbcca",
-    red:       "#c65b5b",
-    stone:     "#9a9a95",
-    stoneDark: "#72726d",
-    ink:       "#3c3227",
-    shadow:    "rgba(38,48,38,0.22)"
+    grass:     "#7fa653",
+    grassDark: "#5f8440",
+    grassLite: "#9dc06b",
+    sage:      "#b8d189",
+    cream:     "#f6ead0",
+    creamDark: "#e2cfa2",
+    wood:      "#a06a3e",
+    woodDark:  "#73482a",
+    roof:      "#b5623f",
+    roofDark:  "#8c472c",
+    soil:      "#7a5236",
+    soilDark:  "#5c3d28",
+    soilWet:   "#48301f",
+    water:     "#5fa8c4",
+    waterDark: "#3f88a6",
+    waterLite: "#a6d3e2",
+    sand:      "#e3d2a3",
+    sky:       "#bfe0ee",
+    gold:      "#ecc24e",
+    pink:      "#e08aa8",
+    pinkSoft:  "#f4c3d3",
+    red:       "#cf5a5a",
+    stone:     "#a9a89e",
+    stoneDark: "#7c7b72",
+    ink:       "#3b3026",
+    shadow:    "rgba(40,52,34,0.22)"
   }
 
 };
