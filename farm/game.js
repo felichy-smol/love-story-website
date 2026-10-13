@@ -41,6 +41,7 @@
   var POND = { cx: 7.5, cy: 19, rx: 5, ry: 3.2 };
   var DOOR_TILE = { x: 8, y: 7 };
   var GATE = { x: 30, y: 6 };
+  var PEN = { x: 19, y: 5, w: 4, h: 4 };        // hen yard (tiles)
   var SECRET = { x0: 31, y0: 4, x1: 36, y1: 8 };
   var FINAL_TILE = { x: 34, y: 7 };
 
@@ -143,7 +144,17 @@
     objects.push({ type: 'sign', tx: 24, ty: 12, solid: true, lines: CFG.signLines });
     objects.push({ type: 'sign', tx: 28, ty: 6, solid: true, lines: CFG.gardenSignLines });
     objects.push({ type: 'door', tx: DOOR_TILE.x, ty: DOOR_TILE.y, solid: false, hidden: true });
-    objects.push({ type: 'finalLetter', tx: FINAL_TILE.x, ty: FINAL_TILE.y, solid: false, hidden: true });
+
+    // hen yard: fence on three sides, open to the west, feed trough beside it
+    for (var hfx = PEN.x; hfx < PEN.x + PEN.w; hfx++) {
+      addObj('fence', hfx, PEN.y - 1, true);
+      addObj('fence', hfx, PEN.y + PEN.h, true);
+    }
+    for (var hfy = PEN.y; hfy < PEN.y + PEN.h; hfy++) addObj('fence', PEN.x + PEN.w, hfy, true);
+    objects.push({ type: 'trough', tx: PEN.x - 1, ty: PEN.y + 1, solid: true });
+
+    // someone is waiting in the hidden garden
+    objects.push({ type: 'npc', tx: FINAL_TILE.x, ty: FINAL_TILE.y, solid: false });
 
     // secret garden interior flowers
     [[32,4],[35,4],[32,8],[35,8],[33,6],[35,6]].forEach(function (t) {
@@ -178,17 +189,25 @@
       seenIntro: false,
       muted: false,
       player: { x: 8 * TILE + 8, y: 12 * TILE + 8, dir: 'down', step: 0, moving: false },
+      hens: makeHens(),
       playTime: 0
     };
     collectibles.forEach(function (c) { s.collected[c.id] = false; });
     return s;
+  }
+  function makeHens() {
+    return [
+      { x: 19 * TILE + 8, y: 6 * TILE + 8, dir: 1, fed: false, egg: false, t: 0, step: 0 },
+      { x: 21 * TILE + 8, y: 6 * TILE + 8, dir: -1, fed: false, egg: false, t: 0, step: 0 },
+      { x: 22 * TILE + 8, y: 7 * TILE + 8, dir: 1, fed: false, egg: false, t: 0, step: 0 }
+    ];
   }
 
   function save() {
     try {
       localStorage.setItem(SAVE_KEY, JSON.stringify({
         day: state.day, coins: state.coins, items: state.items, seeds: state.seeds,
-        selected: state.selected, plots: state.plots, collected: state.collected,
+        selected: state.selected, plots: state.plots, collected: state.collected, hens: state.hens,
         gateOpen: state.gateOpen, ending: state.ending, seenIntro: state.seenIntro,
         player: { x: state.player.x, y: state.player.y, dir: state.player.dir }
       }));
@@ -300,6 +319,7 @@
       else if (name === 'open') this.tone(600, 0.09, 'square', 0.07);
       else if (name === 'blocked') this.tone(140, 0.1, 'square', 0.07);
       else if (name === 'coin') { this.tone(988, 0.07, 'square', 0.09); this.tone(1318, 0.1, 'square', 0.08, t + 0.05); }
+      else if (name === 'cluck') { this.tone(720, 0.05, 'sawtooth', 0.06); this.tone(560, 0.07, 'sawtooth', 0.05, t + 0.05); }
     },
     startAmbient: function () {
       if (!this.ctx || this.ambientTimer) return;
@@ -448,7 +468,8 @@
     '1. Till a soil patch with E, plant a seed, then water it.<br>' +
     '2. Watered crops grow each night - sleep at the cottage door.<br>' +
     '3. Harvest ripe crops to earn coins (carrot 4, berry 7, flower 5).<br>' +
-    '4. Spend coins at the seed box beside the cottage.<br>' +
+    '4. Fill the feed trough so the hens eat; they lay eggs overnight.<br>' +
+    '5. Collect the eggs for extra coins, and buy seeds at the seed box.<br>' +
     'Hidden garden: far EAST, behind the hedge gate - needs all 7 keepsakes.';
 
   function showPanel(el) { el.classList.add('show'); }
@@ -529,6 +550,10 @@
     var c = collectibleAt(f.x, f.y) || collectibleAt(h.x, h.y);
     if (c) { pickCollectible(c); return; }
 
+    // hens (feed / collect eggs)
+    var hen = henAt(f.x, f.y) || henAt(h.x, h.y);
+    if (hen) { henInteract(hen); return; }
+
     // plots
     var pk = plotKey(f.x, f.y) || plotKey(h.x, h.y);
     if (pk) { tendPlot(pk); return; }
@@ -541,7 +566,8 @@
       if (o.type === 'seedbox') { openShop(); Sound.play('open'); return; }
       if (o.type === 'sign') { say('the sign', o.lines || CFG.signLines || [CFG.farmName], null); return; }
       if (o.type === 'gate') { gateInteract(); return; }
-      if (o.type === 'finalLetter') { doEnding(); return; }
+      if (o.type === 'trough') { feedHens(); return; }
+      if (o.type === 'npc') { if (state.gateOpen) doEnding(); return; }
     }
     // water tiles can't be interacted
   }
@@ -570,6 +596,45 @@
     p.crop = null; p.growth = 0; p.watered = false; p.mature = false;
     Sound.play('harvest'); updateHud(); flash(key); save();
     say('', ['Harvested ' + CFG.cropNames[c] + '!  +' + coins + ' coins'], null);
+  }
+
+  function henTile(h) { return { x: Math.floor(h.x / TILE), y: Math.floor(h.y / TILE) }; }
+  function henAt(tx, ty) {
+    for (var i = 0; i < state.hens.length; i++) {
+      var ht = henTile(state.hens[i]);
+      if (ht.x === tx && ht.y === ty) return state.hens[i];
+    }
+    return null;
+  }
+  function henInteract(h) {
+    if (h.egg) {
+      var v = CFG.eggValue || 6;
+      h.egg = false; state.coins += v; updateHud(); Sound.play('coin');
+      say('', ['You found a warm egg!  +' + v + ' coins'], null); save();
+    } else if (!h.fed) {
+      say('', ['This little hen is hungry. Fill the feed trough nearby.'], null);
+    } else {
+      say('', ['The hen clucks softly. She might lay an egg overnight.'], null);
+    }
+  }
+  function feedHens() {
+    var fed = 0;
+    state.hens.forEach(function (h) { if (!h.fed) { h.fed = true; fed++; } });
+    if (fed) { Sound.play('cluck'); say('', ['You filled the trough. ' + fed + ' little hen' + (fed === 1 ? '' : 's') + ' come running.'], null); save(); }
+    else say('', ['The ' + (CFG.henName || 'hens') + ' are already fed for today.'], null);
+  }
+  function updateHens(dt) {
+    var minX = PEN.x * TILE + 6, maxX = (PEN.x + PEN.w) * TILE - 6;
+    state.hens.forEach(function (h) {
+      h.t -= dt;
+      if (h.t <= 0) { h.t = 0.8 + Math.random() * 1.8; h.dir = Math.random() < 0.4 ? 0 : (Math.random() < 0.5 ? -1 : 1); }
+      if (h.dir) {
+        var nx = h.x + h.dir * 16 * dt;
+        if (nx < minX) { nx = minX; h.dir = 1; } else if (nx > maxX) { nx = maxX; h.dir = -1; }
+        h.x = nx;
+      }
+      h.step += dt * 5;
+    });
   }
 
   function flash(key) {
@@ -625,9 +690,12 @@
         if (p.mature) matured++;
       }
     });
+    var eggs = 0;
+    state.hens.forEach(function (h) { if (h.fed) { h.egg = true; eggs++; } h.fed = false; });
     Sound.play('open');
     var msg = 'A new day begins. You drifted off with the window open.';
     if (matured) msg = matured + (matured === 1 ? ' crop is' : ' crops are') + ' ready to harvest!';
+    if (eggs) msg += ' ' + eggs + ' little egg' + (eggs === 1 ? '' : 's') + ' are waiting in the yard!';
     updateHud();
     say('', ['Day ' + state.day + '. ' + msg], null);
     save();
@@ -976,12 +1044,14 @@
       if (state.collected[c.id]) return;
       drawables.push({ coll: c, y: (c.ty + 1) * TILE });
     });
+    state.hens.forEach(function (h) { drawables.push({ hen: h, y: h.y + 6 }); });
     drawables.push({ player: true, y: state.player.y });
     drawables.sort(function (a, b) { return a.y - b.y; });
 
     drawables.forEach(function (it) {
       if (it.player) { drawPlayer(); return; }
       if (it.coll) { drawCollectible(it.coll); return; }
+      if (it.hen) { drawHen(it.hen); return; }
       var o = it.o;
       switch (o.type) {
         case 'tree': drawTree(o.tx, o.ty); break;
@@ -996,7 +1066,8 @@
         case 'hedge': drawHedge(o.tx, o.ty); break;
         case 'gate': drawGate(o.tx, o.ty); break;
         case 'heartFlower': drawHeartFlower(o.tx, o.ty); break;
-        case 'finalLetter': if (state.gateOpen) drawFinalLetter(o.tx, o.ty); break;
+        case 'trough': drawTrough(o.tx, o.ty); break;
+        case 'npc': if (state.gateOpen) drawNPC(o.tx, o.ty); break;
       }
     });
 
@@ -1014,16 +1085,78 @@
     ctx.restore();
   }
 
-  function drawFinalLetter(x, y) {
+  function drawTrough(x, y) {
     var bx = x * TILE, by = y * TILE;
-    R(bx + 3, by + 5, 10, 8, P.cream);
-    R(bx + 3, by + 5, 10, 2, P.pinkSoft);
-    R(bx + 5, by + 8, 6, 1, P.woodDark);
-    R(bx + 5, by + 10, 4, 1, P.woodDark);
-    var pulse = 0.5 + 0.5 * Math.sin(perfNow * 0.005);
-    ctx.globalAlpha = pulse * 0.5;
-    R(bx + 1, by + 3, 14, 12, 'rgba(230,184,74,0.35)');
+    R(bx + 1, by + 8, 14, 6, P.wood);
+    R(bx + 1, by + 8, 14, 2, P.woodDark);
+    R(bx + 2, by + 10, 12, 2, '#8a6a3c');
+    R(bx + 3, by + 10, 3, 2, P.gold);
+    R(bx + 8, by + 10, 3, 2, P.gold);
+    R(bx + 3, by + 14, 2, 2, P.woodDark);
+    R(bx + 11, by + 14, 2, 2, P.woodDark);
+  }
+
+  function drawHen(h) {
+    var x = Math.round(h.x), y = Math.round(h.y);
+    var bob = Math.sin(h.step) * 1;
+    R(x - 5, y - 1, 11, 2, P.shadow);
+    var by = y - 5 + bob;
+    R(x - 1, by + 3, 1, 3, '#e8a23c'); R(x + 2, by + 3, 1, 3, '#e8a23c');
+    disc(x, by, 4, '#f2e3c4');
+    disc(x - 1, by - 1, 3, '#fbf1da');
+    R(x - 4, by, 4, 4, '#e6d0a4');
+    R(x + 3, by - 4, 2, 3, '#f2e3c4');
+    R(x + 5, by - 5, 2, 2, '#e8a23c');
+    R(x + 2, by - 7, 2, 2, P.red);
+    R(x + 3, by - 5, 1, 1, P.ink);
+    if (h.egg) {
+      R(x - 1, by + 2, 3, 4, P.cream);
+      R(x - 1, by + 2, 3, 1, '#fff8ea');
+      var s = 0.4 + 0.4 * Math.sin(perfNow * 0.006);
+      ctx.globalAlpha = s; R(x - 3, by, 7, 8, 'rgba(255,255,255,0.5)'); ctx.globalAlpha = 1;
+    }
+  }
+
+  function drawNameTag(x, y, text) {
+    ctx.font = 'bold 7px "Courier New", monospace';
+    ctx.textAlign = 'center';
+    var w = Math.ceil(ctx.measureText(text).width) + 6;
+    R(x - w / 2, y - 8, w, 9, 'rgba(40,32,26,0.72)');
+    R(x - w / 2, y - 8, w, 1, 'rgba(230,184,74,0.85)');
+    ctx.fillStyle = '#f6e8c8';
+    ctx.fillText(text, Math.round(x), Math.round(y - 1));
+    ctx.textAlign = 'left';
+  }
+
+  function drawNPC(tx, ty) {
+    var x = tx * TILE + 8, y = ty * TILE + 8;
+    var skin = '#f6d2ac', hair = '#d9a94e', hairD = '#b98a34', dress = P.sage, dressD = '#7f9a5c';
+    R(x - 6, y - 2, 12, 3, P.shadow);
+    // boots + legs
+    R(x - 4, y - 2, 3, 3, '#5a3a25'); R(x + 1, y - 2, 3, 3, '#5a3a25');
+    R(x - 4, y - 5, 3, 4, skin); R(x + 1, y - 5, 3, 4, skin);
+    // flared dress
+    R(x - 6, y - 12, 12, 7, dress);
+    R(x - 7, y - 6, 14, 3, dress);
+    R(x - 7, y - 3, 14, 1, dressD);
+    R(x - 6, y - 12, 12, 2, dressD);
+    R(x - 3, y - 10, 6, 6, P.cream); R(x - 3, y - 10, 6, 1, P.creamDark);
+    // arms + letter held to the side
+    R(x - 7, y - 11, 2, 5, skin); R(x + 5, y - 11, 2, 5, skin);
+    R(x + 5, y - 9, 6, 5, P.cream); R(x + 5, y - 9, 6, 1, P.pinkSoft);
+    // head + long hair
+    disc(x, y - 15, 4, skin);
+    R(x - 5, y - 19, 10, 3, hair); R(x - 4, y - 20, 8, 1, hair);
+    R(x - 5, y - 17, 2, 10, hair); R(x + 3, y - 17, 2, 10, hair);
+    R(x - 4, y - 17, 8, 1, hair);
+    R(x - 2, y - 15, 1, 1, P.ink); R(x + 1, y - 15, 1, 1, P.ink);
+    R(x - 3, y - 14, 1, 1, P.pink); R(x + 2, y - 14, 1, 1, P.pink);
+    // warm glow + name tag
+    var pulse = 0.4 + 0.4 * Math.sin(perfNow * 0.004);
+    ctx.globalAlpha = pulse;
+    disc(x, y - 2, 8, 'rgba(230,184,74,0.45)');
     ctx.globalAlpha = 1;
+    drawNameTag(x, y - 24, CFG.gardenNpcName || 'tony');
   }
 
   /* ---------------- title art ---------------- */
@@ -1098,6 +1231,7 @@
     }
     state.playTime += dt;
 
+    updateHens(dt);
     updateHint();
     updateFx(dt);
   }
@@ -1111,9 +1245,15 @@
     var f = frontTile();
     var txt = '';
     var c = collectibleAt(f.x, f.y);
+    var hen = henAt(f.x, f.y);
     var pk = plotKey(f.x, f.y);
     var o = objAt(f.x, f.y);
     if (c) txt = '<span class="key">E</span> pick up ' + CFG.collectibles[c.id].name;
+    else if (hen) {
+      if (hen.egg) txt = '<span class="key">E</span> collect the egg';
+      else if (!hen.fed) txt = 'this hen is hungry - use the feed trough';
+      else txt = 'the hen looks happy';
+    }
     else if (pk) {
       var p = state.plots[pk];
       var nm = CFG.cropNames[state.selected];
@@ -1128,7 +1268,8 @@
       else if (o.type === 'seedbox') txt = '<span class="key">E</span> open the seed box';
       else if (o.type === 'sign') txt = '<span class="key">E</span> read the sign';
       else if (o.type === 'gate') txt = state.gateOpen ? 'the garden gate is open' : '<span class="key">E</span> try the gate';
-      else if (o.type === 'finalLetter') txt = '<span class="key">E</span> open the letter';
+      else if (o.type === 'trough') txt = '<span class="key">E</span> fill the feed trough';
+      else if (o.type === 'npc') txt = state.gateOpen ? '<span class="key">E</span> read the letter from ' + (CFG.gardenNpcName || 'tony') : '';
     }
     if (txt && txt !== lastHint) { hintEl.innerHTML = txt; lastHint = txt; }
     hintEl.classList.toggle('show', !!txt);
@@ -1178,6 +1319,7 @@
       state.items = data.items || state.items; state.seeds = data.seeds || state.seeds;
       state.selected = data.selected || 'carrot'; state.plots = data.plots || {};
       state.collected = data.collected || state.collected;
+      if (data.hens && data.hens.length) state.hens = data.hens;
       state.gateOpen = !!data.gateOpen; state.ending = !!data.ending; state.seenIntro = !!data.seenIntro;
       if (data.player) { state.player.x = data.player.x; state.player.y = data.player.y; state.player.dir = data.player.dir || 'down'; }
     }
@@ -1239,7 +1381,7 @@
       place: function (tx, ty, dir) { state.player.x = tx * TILE + 8; state.player.y = ty * TILE + 8; state.player.dir = dir || 'down'; },
       doAction: doAction, interact: interact, tendPlot: tendPlot, harvest: harvest,
       sleep: sleep, pickCollectible: pickCollectible, openGate: openGate, doEnding: doEnding,
-      openShop: openShop, save: save
+      openShop: openShop, save: save, feedHens: feedHens, henInteract: henInteract, henAt: henAt
     };
   }
 

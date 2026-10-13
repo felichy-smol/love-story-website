@@ -17,6 +17,11 @@ window.GAME_CONFIG = {
   fromName: "Tony",
   milestone: "2 months together",
 
+  /* ---- the little hens + who waits in the hidden garden ---- */
+  henName: "the hens",
+  eggValue: 6,
+  gardenNpcName: "tony",
+
   /* ---- readable in-world signposts ---- */
   signLines: [
     "Moonberry Farm - welcome, my love.",
@@ -85,7 +90,8 @@ window.GAME_CONFIG = {
     "Walk to a soil patch and press E to tend it.",
     "Till, plant, then water - crops grow when you sleep.",
     "Harvest ripe crops to earn coins (carrot 4, berry 7, flower 5).",
-    "Spend coins at the seed box beside the cottage.",
+    "Feed the hens at the trough; they lay eggs overnight.",
+    "Collect eggs for extra coins, and buy seeds at the seed box.",
     "Sleep by pressing E at the cottage door.",
     "The hidden garden is in the far EAST - an old gate in the hedge.",
     "Find all 7 keepsakes to make the gate open."
