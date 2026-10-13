@@ -27,11 +27,11 @@ window.GAME_CONFIG = {
     "Moonberry Farm - welcome, my love.",
     "Coins: till, plant, water, then harvest crops.",
     "The hidden garden hides in the far EAST -",
-    "an old gate tucked in the hedge. 7 keepsakes open it."
+    "an old gate tucked in the hedge. 10 keepsakes open it."
   ],
   gardenSignLines: [
     "the hidden garden, straight ahead",
-    "the old gate needs all 7 keepsakes to open."
+    "the old gate needs all 10 keepsakes to open."
   ],
 
   /* ---- the letter shown when you start ---- */
@@ -66,8 +66,41 @@ window.GAME_CONFIG = {
     locket: { name: "Keepsake",       text: "camera where" }
   },
 
-  /* ---- the hidden garden unlocks once all 7 keepsakes are found ---- */
-  gateLockedMessage: "The gate is old and shut tight... maybe it opens with a key.",
+  /* ---- the hidden garden unlocks once enough keepsakes are found ---- */
+  gateNeedKeepsakes: 10,
+
+  /* ---- little notes she finds: plant a crop and 3 appear each new day ----
+     add as many as you like; they are handed out in order, then repeat. */
+  dailyNotesPerDay: 3,
+  dailyNoteName: "Little Note",
+  dailyMessages: [
+    "i love ur laugh",
+    "i promise to think my turns through in bg3",
+    "considering potatoes frfr",
+    "i'll always be your player 2",
+    "co-op nights with u are my favorite",
+    "even when u steal my loot i still love u",
+    "u make even the loading screens fun",
+    "i'd replay any save file just to be with u",
+    "u r the best teammate i've ever had",
+    "let's farm forever",
+    "respawn, try again, we always make it",
+    "u r my legendary drop",
+    "i'll carry the heavy stuff, u carry my heart",
+    "quick save so i never lose u",
+    "even on a bad connection u r worth the lag",
+    "let's build a little world together",
+    "i'd never pick the villain route with u around",
+    "i'd share my last potion with u",
+    "our side quests are my favorite quests",
+    "u always have the high ground in my heart",
+    "i'll press F for every bug that ever annoyed u",
+    "marry me in minecraft again",
+    "u r the only loot i'd never sell",
+    "i'd grind any level to see u smile"
+  ],
+
+  gateLockedMessage: "The gate is old and shut tight... it needs more keepsakes.",
   gateOpenMessage: "The old gate swings open. The hidden garden is yours.",
 
   /* ---- the final anniversary letter ---- */
@@ -93,8 +126,9 @@ window.GAME_CONFIG = {
     "Feed the hens at the trough; they lay eggs overnight.",
     "Collect eggs for extra coins, and buy seeds at the seed box.",
     "Sleep by pressing E at the cottage door.",
+    "Once you plant a crop, 3 little notes appear every new day.",
     "The hidden garden is in the far EAST - an old gate in the hedge.",
-    "Find all 7 keepsakes to make the gate open."
+    "Find 10 keepsakes to make the gate open."
   ],
 
   /* ---- cozy muted palette (change if you like) ---- */

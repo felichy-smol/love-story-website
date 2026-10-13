@@ -184,6 +184,9 @@
       selected: 'carrot',
       plots: {},
       collected: {},
+      planted: false,
+      daily: [],
+      msgIndex: 0,
       gateOpen: false,
       ending: false,
       seenIntro: false,
@@ -208,6 +211,7 @@
       localStorage.setItem(SAVE_KEY, JSON.stringify({
         day: state.day, coins: state.coins, items: state.items, seeds: state.seeds,
         selected: state.selected, plots: state.plots, collected: state.collected, hens: state.hens,
+        planted: state.planted, daily: state.daily, msgIndex: state.msgIndex,
         gateOpen: state.gateOpen, ending: state.ending, seenIntro: state.seenIntro,
         player: { x: state.player.x, y: state.player.y, dir: state.player.dir }
       }));
@@ -438,8 +442,8 @@
   function updateHud() {
     document.getElementById('dayLabel').textContent = 'Day ' + state.day;
     document.getElementById('coinLabel').textContent = state.coins;
-    var got = collectibles.filter(function (c) { return state.collected[c.id]; }).length;
-    document.getElementById('keepLabel').textContent = got + ' / 7 keepsakes';
+    var got = countKeepsakes();
+    document.getElementById('keepLabel').textContent = Math.min(got, keepNeed()) + ' / ' + keepNeed() + ' keepsakes';
     var sb = document.getElementById('soundBtn');
     sb.textContent = '♪ ' + (Sound.muted ? 'off' : 'on');
     document.getElementById('menuSoundBtn').textContent = '♪ sound: ' + (Sound.muted ? 'off' : 'on');
@@ -536,12 +540,49 @@
     }
     return null;
   }
+  function keepNeed() { return CFG.gateNeedKeepsakes || 10; }
+  function countKeepsakes() {
+    var n = collectibles.filter(function (c) { return state.collected[c.id]; }).length;
+    state.daily.forEach(function (d) { if (d.got) n++; });
+    return n;
+  }
   function collectibleAt(tx, ty) {
     for (var i = 0; i < collectibles.length; i++) {
       var c = collectibles[i];
-      if (c.tx === tx && c.ty === ty && !state.collected[c.id]) return c;
+      if (c.tx === tx && c.ty === ty && !state.collected[c.id]) return { fixed: c };
+    }
+    for (var j = 0; j < state.daily.length; j++) {
+      var d = state.daily[j];
+      if (d.tx === tx && d.ty === ty && !d.got) return { daily: d };
     }
     return null;
+  }
+  function tileFree(tx, ty) {
+    if (tileSolid(tx, ty) || inPond(tx, ty) || inHouse(tx, ty)) return false;
+    if (isSecretBorder(tx, ty) || isSecretInterior(tx, ty)) return false;
+    if (plotMap[tx + ',' + ty] || objAt(tx, ty)) return false;
+    for (var i = 0; i < collectibles.length; i++) if (collectibles[i].tx === tx && collectibles[i].ty === ty) return false;
+    for (var j = 0; j < state.daily.length; j++) if (state.daily[j].tx === tx && state.daily[j].ty === ty) return false;
+    return true;
+  }
+  function spawnDaily() {
+    var pool = CFG.dailyMessages || [];
+    if (!pool.length) return;
+    var per = CFG.dailyNotesPerDay || 3;
+    var pending = state.daily.filter(function (d) { return !d.got; }).length;
+    var want = Math.min(per, Math.max(0, per * 2 - pending));
+    var spots = [];
+    for (var y = 1; y < WORLD_H - 1; y++) {
+      for (var x = 1; x < WORLD_W - 1; x++) if (tileFree(x, y)) spots.push({ x: x, y: y });
+    }
+    for (var i = spots.length - 1; i > 0; i--) { var r = Math.floor(Math.random() * (i + 1)); var tmp = spots[i]; spots[i] = spots[r]; spots[r] = tmp; }
+    for (var s = 0; s < spots.length && want > 0; s++) {
+      var sp = spots[s];
+      if (!tileFree(sp.x, sp.y)) continue;
+      state.daily.push({ tx: sp.x, ty: sp.y, text: pool[state.msgIndex % pool.length], got: false });
+      state.msgIndex++;
+      want--;
+    }
   }
 
   function interact() {
@@ -582,6 +623,7 @@
     if (!p.crop) {
       if (state.seeds[name] <= 0) { say('', ['No ' + CFG.cropNames[name].toLowerCase() + ' seeds left. Try the seed box near the cottage.'], null); return; }
       p.crop = name; p.growth = 0; p.watered = false;
+      state.planted = true;
       state.seeds[name]--; refreshInventory(); Sound.play('plant'); flash(key); save(); return;
     }
     if (p.mature) { harvest(key, p); return; }
@@ -644,9 +686,9 @@
 
   function gateInteract() {
     if (state.gateOpen) { say('', [CFG.gateOpenMessage], null); return; }
-    var got = collectibles.filter(function (c) { return state.collected[c.id]; }).length;
-    if (got >= 7) { openGate(); }
-    else { say('', [CFG.gateLockedMessage, 'Keepsakes found: ' + got + ' / 7'], null); }
+    var got = countKeepsakes();
+    if (got >= keepNeed()) { openGate(); }
+    else { say('', [CFG.gateLockedMessage, 'Keepsakes found: ' + got + ' / ' + keepNeed()], null); }
   }
   function openGate() {
     state.gateOpen = true; applyGate();
@@ -655,15 +697,15 @@
     save();
   }
 
-  function pickCollectible(c) {
-    state.collected[c.id] = true;
-    var info = CFG.collectibles[c.id];
+  function pickCollectible(pick) {
+    var text;
+    if (pick.fixed) { state.collected[pick.fixed.id] = true; text = CFG.collectibles[pick.fixed.id].text; }
+    else { pick.daily.got = true; text = pick.daily.text; }
     Sound.play('discover');
-    var got = collectibles.filter(function (x) { return state.collected[x.id]; }).length;
-    var lines = [info.text];
-    say(CFG.recipientName !== '[HER NICKNAME]' ? CFG.recipientName : 'a keepsake', lines, function () {
+    var got = countKeepsakes();
+    say(CFG.recipientName !== '[HER NICKNAME]' ? CFG.recipientName : 'a keepsake', [text], function () {
       updateHud();
-      if (got >= 7 && !state.gateOpen) openGate();
+      if (got >= keepNeed() && !state.gateOpen) openGate();
     });
     updateHud();
     save();
@@ -692,10 +734,14 @@
     });
     var eggs = 0;
     state.hens.forEach(function (h) { if (h.fed) { h.egg = true; eggs++; } h.fed = false; });
+    var notesBefore = state.daily.length;
+    if (state.planted) spawnDaily();
+    var newNotes = state.daily.length - notesBefore;
     Sound.play('open');
     var msg = 'A new day begins. You drifted off with the window open.';
     if (matured) msg = matured + (matured === 1 ? ' crop is' : ' crops are') + ' ready to harvest!';
     if (eggs) msg += ' ' + eggs + ' little egg' + (eggs === 1 ? '' : 's') + ' are waiting in the yard!';
+    if (newNotes) msg += ' ' + newNotes + ' little note' + (newNotes === 1 ? '' : 's') + ' fluttered in overnight - go find them!';
     updateHud();
     say('', ['Day ' + state.day + '. ' + msg], null);
     save();
@@ -913,6 +959,20 @@
     else if (i === 'locket') { R(bx - 3, by - 4, 6, 3, P.gold); R(bx - 4, by - 2, 8, 4, P.gold); R(bx - 3, by, 6, 2, P.gold); R(bx - 1, by, 2, 2, P.red); }
   }
 
+  function drawDaily(d) {
+    var bx = d.tx * TILE + 8, by = d.ty * TILE + 6 + Math.sin(perfNow * 0.004 + d.tx * 1.7) * 1.4;
+    var pulse = 0.4 + 0.35 * (0.5 + 0.5 * Math.sin(perfNow * 0.005 + d.ty));
+    ctx.globalAlpha = pulse;
+    disc(bx, by, 7, 'rgba(244,195,211,0.55)');
+    ctx.globalAlpha = 1;
+    // little folded note with a heart
+    R(bx - 5, by - 5, 10, 10, P.cream);
+    R(bx - 5, by - 5, 10, 2, P.pinkSoft);
+    R(bx - 5, by + 3, 10, 2, P.creamDark);
+    R(bx - 3, by - 2, 2, 2, P.rose || P.pink); R(bx + 1, by - 2, 2, 2, P.rose || P.pink);
+    R(bx - 4, by - 1, 8, 2, P.rose || P.pink); R(bx - 2, by + 1, 4, 2, P.rose || P.pink); R(bx - 1, by + 3, 2, 1, P.rose || P.pink);
+  }
+
   function drawPlayer() {
     var p = state.player;
     var x = p.x, y = p.y, d = p.dir;
@@ -1044,6 +1104,10 @@
       if (state.collected[c.id]) return;
       drawables.push({ coll: c, y: (c.ty + 1) * TILE });
     });
+    state.daily.forEach(function (d) {
+      if (d.got) return;
+      drawables.push({ daily: d, y: (d.ty + 1) * TILE });
+    });
     state.hens.forEach(function (h) { drawables.push({ hen: h, y: h.y + 6 }); });
     drawables.push({ player: true, y: state.player.y });
     drawables.sort(function (a, b) { return a.y - b.y; });
@@ -1051,6 +1115,7 @@
     drawables.forEach(function (it) {
       if (it.player) { drawPlayer(); return; }
       if (it.coll) { drawCollectible(it.coll); return; }
+      if (it.daily) { drawDaily(it.daily); return; }
       if (it.hen) { drawHen(it.hen); return; }
       var o = it.o;
       switch (o.type) {
@@ -1248,7 +1313,7 @@
     var hen = henAt(f.x, f.y);
     var pk = plotKey(f.x, f.y);
     var o = objAt(f.x, f.y);
-    if (c) txt = '<span class="key">E</span> pick up ' + CFG.collectibles[c.id].name;
+    if (c) txt = '<span class="key">E</span> pick up ' + (c.fixed ? CFG.collectibles[c.fixed.id].name : (CFG.dailyNoteName || 'Little Note'));
     else if (hen) {
       if (hen.egg) txt = '<span class="key">E</span> collect the egg';
       else if (!hen.fed) txt = 'this hen is hungry - use the feed trough';
@@ -1319,6 +1384,9 @@
       state.items = data.items || state.items; state.seeds = data.seeds || state.seeds;
       state.selected = data.selected || 'carrot'; state.plots = data.plots || {};
       state.collected = data.collected || state.collected;
+      state.planted = !!data.planted;
+      state.daily = data.daily || [];
+      state.msgIndex = data.msgIndex || 0;
       if (data.hens && data.hens.length) state.hens = data.hens;
       state.gateOpen = !!data.gateOpen; state.ending = !!data.ending; state.seenIntro = !!data.seenIntro;
       if (data.player) { state.player.x = data.player.x; state.player.y = data.player.y; state.player.dir = data.player.dir || 'down'; }
@@ -1381,7 +1449,8 @@
       place: function (tx, ty, dir) { state.player.x = tx * TILE + 8; state.player.y = ty * TILE + 8; state.player.dir = dir || 'down'; },
       doAction: doAction, interact: interact, tendPlot: tendPlot, harvest: harvest,
       sleep: sleep, pickCollectible: pickCollectible, openGate: openGate, doEnding: doEnding,
-      openShop: openShop, save: save, feedHens: feedHens, henInteract: henInteract, henAt: henAt
+      openShop: openShop, save: save, feedHens: feedHens, henInteract: henInteract, henAt: henAt,
+      countKeepsakes: countKeepsakes, spawnDaily: spawnDaily, dailyAt: function (tx, ty) { return collectibleAt(tx, ty); }
     };
   }
 
