@@ -22,6 +22,13 @@
   /* ---------------- tiny draw helpers ---------------- */
   function R(x, y, w, h, c) { ctx.fillStyle = c; ctx.fillRect(x | 0, y | 0, w | 0, h | 0); }
   function RR(x, y, w, h, c) { ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); }
+  function disc(cx, cy, r, c) {
+    ctx.fillStyle = c;
+    for (var dy = -r; dy <= r; dy++) {
+      var dx = Math.sqrt(r * r - dy * dy) | 0;
+      ctx.fillRect(Math.round(cx - dx), Math.round(cy + dy), dx * 2 + 1, 1);
+    }
+  }
   function hash(x, y) {
     var n = (x * 374761393 + y * 668265263) | 0;
     n = (n ^ (n >> 13)) * 1274126177;
@@ -109,7 +116,8 @@
     [[16,16],[28,11],[5,15]].forEach(function (t) { addObj('mushroom', t[0], t[1], false); });
 
     // decorations: flowers, grass
-    [[3,13],[11,13],[21,17],[19,8],[10,20],[32,12],[6,11],[23,20],[29,21]].forEach(function (t) {
+    [[3,13],[11,13],[21,17],[19,8],[10,20],[32,12],[6,11],[23,20],[29,21],
+     [22,6],[24,7],[26,7],[28,8]].forEach(function (t) {
       addObj('flowerDeco', t[0], t[1], false);
     });
 
@@ -132,7 +140,8 @@
     // special in-world points
     objects.push({ type: 'mailbox', tx: 20, ty: 21, solid: true });
     objects.push({ type: 'seedbox', tx: 12, ty: 10, solid: true });
-    objects.push({ type: 'sign', tx: 24, ty: 12, solid: true });
+    objects.push({ type: 'sign', tx: 24, ty: 12, solid: true, lines: CFG.signLines });
+    objects.push({ type: 'sign', tx: 28, ty: 6, solid: true, lines: CFG.gardenSignLines });
     objects.push({ type: 'door', tx: DOOR_TILE.x, ty: DOOR_TILE.y, solid: false, hidden: true });
     objects.push({ type: 'finalLetter', tx: FINAL_TILE.x, ty: FINAL_TILE.y, solid: false, hidden: true });
 
@@ -436,12 +445,11 @@
     '• Interact: <b>E</b> or space / big button<br>' +
     '• Pick seed: <b>1</b> carrot · <b>2</b> strawberry · <b>3</b> moonflower<br>' +
     '• Menu: <b>Esc</b> · Sound: <b>M</b><br>' +
-    '1. Walk to a soil patch and press E to till it.<br>' +
-    '2. Press E again to plant your chosen seed.<br>' +
-    '3. Press E on the crop to water it (it must be watered).<br>' +
-    '4. Stand at the cottage door and press E to sleep.<br>' +
-    '5. Watered crops grow each night. Harvest when full-grown.<br>' +
-    'Find all 7 keepsakes to open the hidden garden.';
+    '1. Till a soil patch with E, plant a seed, then water it.<br>' +
+    '2. Watered crops grow each night - sleep at the cottage door.<br>' +
+    '3. Harvest ripe crops to earn coins (carrot 4, berry 7, flower 5).<br>' +
+    '4. Spend coins at the seed box beside the cottage.<br>' +
+    'Hidden garden: far EAST, behind the hedge gate - needs all 7 keepsakes.';
 
   function showPanel(el) { el.classList.add('show'); }
   function hidePanel(el) { el.classList.remove('show'); }
@@ -531,7 +539,7 @@
       if (o.type === 'door') { sleep(); return; }
       if (o.type === 'mailbox') { say('mailbox', CFG.openingLetter.lines, null); Sound.play('open'); return; }
       if (o.type === 'seedbox') { openShop(); Sound.play('open'); return; }
-      if (o.type === 'sign') { say('the sign', [CFG.farmName + '\n' + '-- ' + CFG.milestone + ' --'], null); return; }
+      if (o.type === 'sign') { say('the sign', o.lines || CFG.signLines || [CFG.farmName], null); return; }
       if (o.type === 'gate') { gateInteract(); return; }
       if (o.type === 'finalLetter') { doEnding(); return; }
     }
@@ -587,7 +595,7 @@
     var info = CFG.collectibles[c.id];
     Sound.play('discover');
     var got = collectibles.filter(function (x) { return state.collected[x.id]; }).length;
-    var lines = [info.name + '\n\n' + info.text];
+    var lines = [info.text];
     say(CFG.recipientName !== '[HER NICKNAME]' ? CFG.recipientName : 'a keepsake', lines, function () {
       updateHud();
       if (got >= 7 && !state.gateOpen) openGate();
@@ -640,33 +648,33 @@
   function drawTree(x, y) {
     var bx = x * TILE, by = y * TILE;
     var sway = Math.round(Math.sin(perfNow * 0.001 + x) * 0.7);
+    var cx = bx + 8, cy = by + 8 + sway;
     // trunk + roots
-    R(bx + 6, by + 9, 4, 11, P.woodDark);
-    R(bx + 6, by + 9, 2, 11, P.wood);
-    R(bx + 4, by + 18, 8, 2, P.woodDark);
-    // layered canopy
-    R(bx + 1, by + 5 + sway, 14, 11, P.grassDark);
-    R(bx + 2, by + 2 + sway, 12, 12, P.grass);
-    R(bx + 4, by + 1 + sway, 8, 8, P.grassLite);
-    R(bx + 5, by + 1 + sway, 5, 5, P.sage);
-    R(bx + 2, by + 6 + sway, 2, 2, P.grassLite);
-    R(bx + 11, by + 8 + sway, 2, 2, P.grassDark);
+    R(cx - 2, cy + 3, 4, 8, P.woodDark);
+    R(cx - 2, cy + 3, 2, 8, P.wood);
+    R(cx - 4, cy + 10, 8, 2, P.woodDark);
+    // rounded layered canopy
+    disc(cx, cy, 8, P.grassDark);
+    disc(cx, cy - 1, 7, P.grass);
+    disc(cx - 2, cy - 2, 4, P.grassLite);
+    disc(cx + 1, cy - 3, 3, P.sage);
+    R(cx - 6, cy + 3, 2, 2, P.grassLite);
+    R(cx + 5, cy + 4, 2, 2, P.grassDark);
     // blossom dots on some trees
-    if (hash(x, y) > 0.55) { R(bx + 4, by + 5 + sway, 2, 2, P.pinkSoft); R(bx + 9, by + 9 + sway, 2, 2, P.pinkSoft); }
+    if (hash(x, y) > 0.55) { R(cx - 3, cy, 2, 2, P.pinkSoft); R(cx + 3, cy + 2, 2, 2, P.pinkSoft); }
   }
   function drawRock(x, y) {
-    var bx = x * TILE, by = y * TILE;
-    R(bx + 2, by + 8, 12, 6, P.stoneDark);
-    R(bx + 3, by + 5, 10, 6, P.stone);
-    R(bx + 5, by + 4, 6, 4, '#b3b3ad');
-    R(bx + 4, by + 11, 8, 2, P.stoneDark);
+    var bx = x * TILE, by = y * TILE, cx = bx + 8, cy = by + 10;
+    disc(cx, cy, 6, P.stoneDark);
+    disc(cx, cy - 1, 5, P.stone);
+    disc(cx - 2, cy - 2, 2, '#c3c3ba');
   }
   function drawShrub(x, y) {
-    var bx = x * TILE, by = y * TILE;
-    R(bx + 2, by + 6, 12, 9, P.grassDark);
-    R(bx + 3, by + 5, 10, 8, P.grass);
-    R(bx + 5, by + 4, 6, 5, P.sage);
-    R(bx + 8, by + 7, 3, 3, '#c96f8a');
+    var bx = x * TILE, by = y * TILE, cx = bx + 8, cy = by + 9;
+    disc(cx, cy, 7, P.grassDark);
+    disc(cx, cy - 1, 6, P.grass);
+    disc(cx - 1, cy - 2, 3, P.sage);
+    R(cx + 1, cy, 2, 2, '#c96f8a');
   }
   function drawFence(x, y) {
     var bx = x * TILE, by = y * TILE;
@@ -677,20 +685,18 @@
     R(bx + 2, by + 4, 1, 11, P.woodDark);
   }
   function drawMushroom(x, y) {
-    var bx = x * TILE, by = y * TILE;
-    R(bx + 6, by + 9, 4, 5, P.cream);
-    R(bx + 4, by + 5, 8, 5, P.red);
-    R(bx + 5, by + 4, 6, 2, P.red);
-    R(bx + 6, by + 6, 1, 1, P.cream); R(bx + 9, by + 7, 1, 1, P.cream);
+    var bx = x * TILE, by = y * TILE, cx = bx + 8, cy = by + 8;
+    R(cx - 2, cy, 4, 6, P.cream);
+    R(cx - 2, cy, 2, 6, '#e6dcc2');
+    disc(cx, cy - 2, 5, P.red);
+    disc(cx - 1, cy - 3, 2, '#e08a8a');
+    R(cx - 2, cy - 3, 1, 1, P.cream); R(cx + 2, cy - 1, 1, 1, P.cream);
   }
   function drawFlowerDeco(x, y, color) {
-    var bx = x * TILE, by = y * TILE;
-    R(bx + 7, by + 8, 2, 6, P.grassDark);
-    R(bx + 5, by + 5, 3, 3, color);
-    R(bx + 9, by + 5, 3, 3, color);
-    R(bx + 7, by + 3, 3, 3, color);
-    R(bx + 7, by + 7, 3, 3, color);
-    R(bx + 8, by + 6, 1, 1, P.gold);
+    var bx = x * TILE, by = y * TILE, cx = bx + 8, cy = by + 7;
+    R(cx - 1, cy + 2, 2, 6, P.grassDark);
+    disc(cx, cy, 3, color);
+    R(cx - 1, cy - 1, 2, 2, P.gold);
   }
   function drawSign(x, y) {
     var bx = x * TILE, by = y * TILE;
@@ -740,13 +746,11 @@
     }
   }
   function drawHeartFlower(x, y) {
-    var bx = x * TILE, by = y * TILE;
-    R(bx + 7, by + 9, 2, 5, P.grassDark);
-    R(bx + 5, by + 4, 3, 3, P.pink);
-    R(bx + 9, by + 4, 3, 3, P.pink);
-    R(bx + 7, by + 2, 3, 3, P.pinkSoft);
-    R(bx + 7, by + 7, 3, 3, P.pink);
-    R(bx + 8, by + 6, 1, 1, P.gold);
+    var bx = x * TILE, by = y * TILE, cx = bx + 8, cy = by + 6;
+    R(cx - 1, cy + 3, 2, 6, P.grassDark);
+    disc(cx, cy, 3, P.pink);
+    disc(cx - 1, cy - 1, 2, P.pinkSoft);
+    R(cx - 1, cy - 1, 2, 2, P.gold);
   }
 
   function drawHouse() {
@@ -866,16 +870,17 @@
     // arms
     R(x - 7, y - 11, 2, 5, skin);
     R(x + 5, y - 11, 2, 5, skin);
-    // head
-    R(x - 4, y - 19, 8, 7, skin);
-    // long hair
-    R(x - 5, y - 20, 10, 4, hair);
-    R(x - 5, y - 20, 10, 1, hairD);
-    R(x - 5, y - 16, 2, 9, hair);
-    R(x + 3, y - 16, 2, 9, hair);
-    if (d === 'up') { R(x - 5, y - 20, 10, 9, hair); R(x - 5, y - 20, 10, 1, hairD); }
-    else {
-      R(x - 4, y - 16, 8, 1, hair); // fringe
+    // round head + hair
+    disc(x, y - 15, 4, skin);
+    R(x - 5, y - 19, 10, 3, hair);
+    R(x - 4, y - 20, 8, 1, hair);
+    R(x - 5, y - 17, 2, 8, hair);
+    R(x + 3, y - 17, 2, 8, hair);
+    if (d === 'up') {
+      R(x - 5, y - 19, 10, 8, hair);
+      R(x - 4, y - 20, 8, 1, hairD);
+    } else {
+      R(x - 4, y - 17, 8, 1, hair); // fringe
       if (d === 'down') {
         R(x - 2, y - 15, 1, 1, P.ink); R(x + 1, y - 15, 1, 1, P.ink);
         R(x - 3, y - 14, 1, 1, P.pinkSoft); R(x + 2, y - 14, 1, 1, P.pinkSoft);
@@ -883,8 +888,8 @@
       else if (d === 'right') { R(x + 2, y - 15, 1, 1, P.ink); }
     }
     // little flower tucked in her hair
-    R(x + 4, y - 19, 2, 2, P.gold);
-    R(x + 3, y - 20, 1, 1, P.pinkSoft); R(x + 6, y - 20, 1, 1, P.pinkSoft);
+    R(x + 4, y - 18, 2, 2, P.gold);
+    R(x + 3, y - 19, 1, 1, P.pinkSoft); R(x + 6, y - 19, 1, 1, P.pinkSoft);
   }
 
   /* ---------------- ground ---------------- */

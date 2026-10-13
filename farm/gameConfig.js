@@ -17,6 +17,18 @@ window.GAME_CONFIG = {
   fromName: "Tony",
   milestone: "2 months together",
 
+  /* ---- readable in-world signposts ---- */
+  signLines: [
+    "Moonberry Farm - welcome, my love.",
+    "Coins: till, plant, water, then harvest crops.",
+    "The hidden garden hides in the far EAST -",
+    "an old gate tucked in the hedge. 7 keepsakes open it."
+  ],
+  gardenSignLines: [
+    "the hidden garden, straight ahead",
+    "the old gate needs all 7 keepsakes to open."
+  ],
+
   /* ---- the letter shown when you start ---- */
   openingLetter: {
     title: "A letter arrived...",
@@ -71,9 +83,12 @@ window.GAME_CONFIG = {
   hints: [
     "Move with WASD or the arrow keys.",
     "Walk to a soil patch and press E to tend it.",
-    "Pick a seed with 1 / 2 / 3, then plant it.",
-    "Water your crops - they grow when you sleep.",
-    "Press E at the cottage door to end the day."
+    "Till, plant, then water - crops grow when you sleep.",
+    "Harvest ripe crops to earn coins (carrot 4, berry 7, flower 5).",
+    "Spend coins at the seed box beside the cottage.",
+    "Sleep by pressing E at the cottage door.",
+    "The hidden garden is in the far EAST - an old gate in the hedge.",
+    "Find all 7 keepsakes to make the gate open."
   ],
 
   /* ---- cozy muted palette (change if you like) ---- */
